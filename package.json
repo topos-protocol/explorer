@@ -1,0 +1,31 @@
+{
+  "name": "@topos-network/explorer",
+  "version": "1.0.0",
+  "description": "Topos Explorer is the web app to explore the Topos ecosystem 🚀",
+  "main": "index.js",
+  "scripts": {
+    "backend:start": "npm run start:dev --workspace backend",
+    "frontend:build": "npm run build --workspace frontend",
+    "frontend:start": "npm run start --workspace frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/topos-network/explorer.git"
+  },
+  "keywords": [
+    "blockchain",
+    "explorer",
+    "topos",
+    "subnet",
+    "tce"
+  ],
+  "author": "Sebastien Dan <sebastien.dan@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/topos-network/explorer/issues"
+  },
+  "homepage": "https://github.com/topos-network/explorer#readme",
+  "workspaces": [
+    "packages/*"
+  ]
+}
