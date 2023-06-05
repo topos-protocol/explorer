@@ -51,7 +51,12 @@ const SubnetInfo = () => {
             key: 'number',
             title: 'Number',
           },
-          { dataIndex: 'hash', key: 'hash', title: 'Hash' },
+          {
+            dataIndex: 'hash',
+            key: 'hash',
+            title: 'Hash',
+            render: (hash: string) => hash.substring(2),
+          },
           {
             dataIndex: 'timestamp',
             key: 'date',
