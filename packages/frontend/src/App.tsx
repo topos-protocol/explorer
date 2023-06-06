@@ -8,7 +8,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { ErrorsContext } from './contexts/errors'
 import { SelectedToposSubnetContext } from './contexts/selectedToposSubnet'
 import { SubnetsContext } from './contexts/subnets'
-import Content from './components/Content'
+import Content from './components/Routes'
 import Footer from './components/Footer'
 import Header from './components/Header'
 
