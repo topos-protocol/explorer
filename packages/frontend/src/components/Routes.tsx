@@ -1,12 +1,11 @@
 import styled from '@emotion/styled'
-import { Breadcrumb, Layout } from 'antd'
+import { Layout } from 'antd'
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 import Home from '../routes/Home'
-import Subnets from '../routes/Subnets'
+import Subnet from '../routes/Subnet'
 import TCE from '../routes/TCE'
-import ToposSubnetSelector from './ToposSubnetSelector'
 
 const { Content: AntdContent } = Layout
 
@@ -17,10 +16,9 @@ const Root = styled(AntdContent)`
 
 const Content = () => (
   <Root>
-    <ToposSubnetSelector />
     <Routes>
       <Route index path="/" element={<Home />} />
-      <Route path="/subnets" element={<Subnets />} />
+      <Route path="/subnet" element={<Subnet />} />
       <Route path="/tce" element={<TCE />} />
     </Routes>
   </Root>

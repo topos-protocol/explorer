@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import React from 'react'
 
 import { Subnet } from '../types'
-import { SelectedToposSubnetContext } from '../contexts/selectedToposSubnet'
+import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 
 interface Args {
   subnet?: Subnet
@@ -10,7 +10,7 @@ interface Args {
 }
 
 export default function useEthers({ subnet }: Args = {}) {
-  const { selectedToposSubnet } = React.useContext(SelectedToposSubnetContext)
+  const { selectedToposSubnet } = React.useContext(SelectedNetworksContext)
   const provider = React.useMemo(() => {
     const endpoint = subnet?.endpoint || selectedToposSubnet?.endpoint
 

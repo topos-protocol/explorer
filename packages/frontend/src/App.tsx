@@ -6,7 +6,7 @@ import React, { useEffect } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
 import { ErrorsContext } from './contexts/errors'
-import { SelectedToposSubnetContext } from './contexts/selectedToposSubnet'
+import { SelectedNetworksContext } from './contexts/selectedNetworks'
 import { SubnetsContext } from './contexts/subnets'
 import Content from './components/Routes'
 import Footer from './components/Footer'
@@ -16,6 +16,7 @@ import 'antd/dist/reset.css'
 import useTheme from './hooks/useTheme'
 import { SubnetWithId } from './types'
 import useRegisteredSubnets from './hooks/useRegisteredSubnets'
+import { getToposSubnetFromEndpoint } from './components/ToposSubnetSelector'
 
 const Errors = styled.div`
   margin: 1rem auto;
@@ -30,21 +31,48 @@ const Layout = styled(AntdLayout)`
 
 const App = () => {
   const theme = useTheme()
+  const [selectedSubnet, setSelectedSubnet] = React.useState<SubnetWithId>()
   const [selectedToposSubnet, setSelectedToposSubnet] =
     React.useState<SubnetWithId>()
+  const [selectedTCEEndpoint, setSelectedTCEEndpoint] = React.useState<string>()
   const [subnets, setSubnets] = React.useState<SubnetWithId[]>()
   const [errors, setErrors] = React.useState<string[]>([])
   const { registeredSubnets } = useRegisteredSubnets(selectedToposSubnet)
 
+  useEffect(function init() {
+    async function _() {
+      const storedToposSubnetEndpoint = localStorage.getItem(
+        'toposSubnetEndpoint'
+      )
+      if (storedToposSubnetEndpoint) {
+        const toposSubnet = await getToposSubnetFromEndpoint(
+          storedToposSubnetEndpoint
+        )
+        setSelectedToposSubnet(toposSubnet)
+      }
+
+      const storedTCEEndpoint = localStorage.getItem('tceEndpoint')
+      if (storedTCEEndpoint) {
+        setSelectedTCEEndpoint(storedTCEEndpoint)
+      }
+    }
+
+    _()
+  }, [])
+
   useEffect(
     function onToposSubnetSelected() {
-      if (
-        selectedToposSubnet &&
-        // registeredSubnets &&
-        // registeredSubnets.length
-        true
-      ) {
-        setSubnets([selectedToposSubnet, ...(registeredSubnets || [])])
+      if (selectedToposSubnet) {
+        const subnets = [selectedToposSubnet, ...(registeredSubnets || [])]
+        setSubnets(subnets)
+
+        const storedSubnetId = localStorage.getItem('subnetId')
+        if (storedSubnetId) {
+          const subnet = subnets.find((s) => s.id === storedSubnetId)
+          if (subnet) {
+            setSelectedSubnet(subnet)
+          }
+        }
       }
     },
     [selectedToposSubnet, registeredSubnets]
@@ -54,8 +82,15 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <ErrorsContext.Provider value={{ setErrors }}>
-          <SelectedToposSubnetContext.Provider
-            value={{ selectedToposSubnet, setSelectedToposSubnet }}
+          <SelectedNetworksContext.Provider
+            value={{
+              selectedSubnet,
+              selectedTCEEndpoint,
+              selectedToposSubnet,
+              setSelectedSubnet,
+              setSelectedTCEEndpoint,
+              setSelectedToposSubnet,
+            }}
           >
             <SubnetsContext.Provider value={{ data: subnets }}>
               <Layout>
@@ -77,7 +112,7 @@ const App = () => {
                 <Footer />
               </Layout>
             </SubnetsContext.Provider>
-          </SelectedToposSubnetContext.Provider>
+          </SelectedNetworksContext.Provider>
         </ErrorsContext.Provider>
       </BrowserRouter>
     </ThemeProvider>

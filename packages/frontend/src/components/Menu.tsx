@@ -1,6 +1,6 @@
 import { Menu as AntdMenu } from 'antd'
-import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import React, { useContext } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 
 const Menu = () => {
   const { pathname } = useLocation()
@@ -8,11 +8,15 @@ const Menu = () => {
   const items = React.useMemo(
     () => [
       {
-        label: <Link to="/subnets">Subnets</Link>,
-        key: 'subnets',
-        rootpath: '/subnets',
+        key: 'subnet',
+        label: <NavLink to="/subnet">Subnet</NavLink>,
+        rootpath: '/subnet',
       },
-      { label: <Link to="/tce">TCE</Link>, key: 'tce', rootpath: '/tce' },
+      {
+        key: 'tce',
+        label: <NavLink to="/tce">TCE</NavLink>,
+        rootpath: '/tce',
+      },
     ],
     []
   )
