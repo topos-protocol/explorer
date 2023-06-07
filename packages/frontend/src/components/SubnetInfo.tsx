@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 
-import { SelectedSubnetContext } from '../contexts/selectedSubnet'
+import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import { Card, Col, Descriptions, Row, Space, Statistic, Table } from 'antd'
 import useSubnetBlockInfo from '../hooks/useSubnetBlockInfo'
 import useSubnetCertInfo from '../hooks/useSubnetCertInfo'
 
 const SubnetInfo = () => {
-  const { selectedSubnet } = useContext(SelectedSubnetContext)
+  const { selectedSubnet } = useContext(SelectedNetworksContext)
   const { blocks } = useSubnetBlockInfo(selectedSubnet)
   const { latestCertificate } = useSubnetCertInfo(selectedSubnet)
 

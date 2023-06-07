@@ -11,45 +11,17 @@ import React, {
 } from 'react'
 
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
-import { toposCoreContract } from '../contracts'
-import { SubnetWithId } from '../types'
 
 const { Text } = Typography
 
 let index = 0
 
-export function getToposSubnetFromEndpoint(endpoint?: string) {
-  return new Promise<SubnetWithId>(async (resolve, reject) => {
-    if (endpoint) {
-      const provider = new ethers.providers.JsonRpcProvider(
-        `http://${endpoint}`
-      )
-      const network = await provider.getNetwork()
-      const chainId = network.chainId
-
-      const contract = toposCoreContract.connect(provider)
-      const subnetId = await contract.networkSubnetId()
-
-      resolve({
-        chainId: BigNumber.from(chainId.toString()),
-        currencySymbol: 'TOPOS',
-        endpoint,
-        id: subnetId,
-        logoURL: '/logo.svg',
-        name: 'Topos Subnet',
-      })
-    }
-
-    reject()
-  })
-}
-
-const ToposSubnetSelector = () => {
-  const { selectedToposSubnet, setSelectedToposSubnet } = useContext(
+const TCESelector = () => {
+  const { selectedTCEEndpoint, setSelectedTCEEndpoint } = useContext(
     SelectedNetworksContext
   )
-  const [mainnetItems] = useState(['rpc.topos-subnet.zkfoundation.io'])
-  const [items, setItems] = useState(['localhost:10002'])
+  const [mainnetItems] = useState(['tce.zkfoundation.io'])
+  const [items, setItems] = useState(['localhost:1340'])
   const [name, setName] = useState('')
   const inputRef = useRef<InputRef>(null)
   const [form] = Form.useForm()
@@ -71,29 +43,26 @@ const ToposSubnetSelector = () => {
 
   const onValueChange = useCallback(
     async (endpoint: string) => {
-      if (endpoint && setSelectedToposSubnet) {
-        const storedToposSubnetEndpoint = localStorage.getItem(
-          'toposSubnetEndpoint'
-        )
-        if (storedToposSubnetEndpoint !== endpoint) {
-          localStorage.setItem('toposSubnetEndpoint', endpoint)
+      if (endpoint && setSelectedTCEEndpoint) {
+        const storedTCEEndpoint = localStorage.getItem('tceEndpoint')
+        if (storedTCEEndpoint !== endpoint) {
+          localStorage.setItem('tceEndpoint', endpoint)
         }
 
-        const toposSubnet = await getToposSubnetFromEndpoint(endpoint)
-        setSelectedToposSubnet(toposSubnet)
+        setSelectedTCEEndpoint(endpoint)
       }
     },
-    [setSelectedToposSubnet]
+    [setSelectedTCEEndpoint]
   )
 
   return (
     <Form layout="vertical" form={form}>
-      <Form.Item name="toposSubnetEndpoint" label="Topos Subnet endpoint">
+      <Form.Item name="tceEndpoint" label="TCE endpoint">
         <Select
           style={{ width: 300 }}
-          placeholder="Select a Topos Subnet endpoint"
+          placeholder="Select a TCE endpoint"
+          defaultValue={selectedTCEEndpoint}
           onChange={onValueChange}
-          defaultValue={selectedToposSubnet?.endpoint}
           dropdownRender={(menu) => (
             <>
               {menu}
@@ -136,4 +105,4 @@ const ToposSubnetSelector = () => {
   )
 }
 
-export default ToposSubnetSelector
+export default TCESelector

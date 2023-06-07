@@ -9,8 +9,7 @@ const Breadcrumb = styled(AntdBreadcrumb)`
 
 const Content = styled.div`
   min-height: 280px;
-  padding: 1.5rem;
-  background: ${(props) => props.theme.colorBgContainer};
+  padding: 1.5rem 1.5rem 1.5rem 0;
 `
 
 interface Props {
