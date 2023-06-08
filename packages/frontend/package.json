@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
+    "@apollo/client": "^3.7.15",
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
     "@topos-protocol/topos-smart-contracts": "^1.0.1",
@@ -20,6 +21,7 @@
     "axios": "^1.4.0",
     "ethers": "^5.7.2",
     "force-graph": "^1.43.1",
+    "graphql": "^16.6.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-router-dom": "^6.11.1",

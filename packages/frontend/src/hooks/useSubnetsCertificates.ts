@@ -1,6 +1,12 @@
-import { Certificate } from '@topos-protocol/topos-grpc-client-stub/generated/topos/uci/v1/certification_pb'
-import { WatchCertificatesResponse } from '@topos-protocol/topos-grpc-client-stub/generated/topos/tce/v1/api_pb'
-import React, { useEffect } from 'react'
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  gql,
+} from '@apollo/client'
+import { Certificate } from '@topos-network/topos-grpc-client-stub/generated/topos/uci/v1/certification_pb'
+import { WatchCertificatesResponse } from '@topos-network/topos-grpc-client-stub/generated/topos/tce/v1/api_pb'
+import React, { useEffect, useMemo } from 'react'
 
 import { ErrorsContext } from '../contexts/errors'
 import { SubnetsContext } from '../contexts/subnets'
@@ -11,6 +17,61 @@ export default function useSubnetsCertificates() {
   const [certificates, setCertificates] = React.useState<
     Certificate.AsObject[]
   >([])
+
+  const client = useMemo(
+    () =>
+      new ApolloClient({
+        uri: 'localhost:4000',
+        cache: new InMemoryCache(),
+      }),
+    []
+  )
+
+  useEffect(
+    function init() {
+      if (client) {
+        client
+          .query({
+            query: gql`
+              query {
+                certificates(
+                  fromSourceCheckpoint: {
+                    sourceSubnetIds: [
+                      {
+                        value: "0x3131313131313131313131313131313131313131313131313131313131313131"
+                      }
+                    ]
+                    positions: [
+                      {
+                        sourceSubnetId: {
+                          value: "0x3131313131313131313131313131313131313131313131313131313131313131"
+                        }
+                        position: 0
+                      }
+                    ]
+                  }
+                  first: 10
+                ) {
+                  prevId
+                  proof
+                  signature
+                  sourceSubnetId
+                  stateRoot
+                  targetSubnets {
+                    value
+                  }
+                  txRootHash
+                  verifier
+                }
+              }
+            `,
+          })
+          .then((result) => console.log(result))
+          .catch(console.error)
+      }
+    },
+    [client]
+  )
 
   useEffect(
     function watch() {
