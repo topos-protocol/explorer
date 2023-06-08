@@ -1,14 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons'
-import {
-  Divider,
-  Input,
-  Select,
-  Space,
-  Button,
-  Avatar,
-  Typography,
-  Form,
-} from 'antd'
+import { Divider, Input, Select, Space, Button, Typography, Form } from 'antd'
 import type { InputRef } from 'antd'
 import React, {
   useContext,
@@ -20,8 +11,7 @@ import React, {
 
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import { SubnetsContext } from '../contexts/subnets'
-
-const { Text } = Typography
+import SubnetNameAndLogo from './SubnetNameAndLogo'
 
 let index = 0
 
@@ -99,12 +89,7 @@ const SubnetSelector = ({ disabled = false }: Props) => {
               label: 'Remote Subnets',
               options: subnets
                 ? subnets.map((s) => ({
-                    label: (
-                      <Space>
-                        <Avatar size="small" src={s.logoURL} />
-                        <Text>{s.name}</Text>
-                      </Space>
-                    ),
+                    label: <SubnetNameAndLogo subnet={s} />,
                     value: s.id,
                   }))
                 : [],

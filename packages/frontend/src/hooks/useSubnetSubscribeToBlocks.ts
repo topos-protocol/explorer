@@ -5,7 +5,7 @@ import { ErrorsContext } from '../contexts/errors'
 import { Subnet } from '../types'
 import useEthers from './useEthers'
 
-export default function useSubnetBlockInfo(subnet?: Subnet) {
+export default function useSubnetSubscribeToBlocks(subnet?: Subnet) {
   const { setErrors } = React.useContext(ErrorsContext)
   const { provider } = useEthers({ subnet })
   const [blocks, setBlocks] = React.useState<ethers.providers.Block[]>([])

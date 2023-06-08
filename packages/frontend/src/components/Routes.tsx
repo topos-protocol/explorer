@@ -4,6 +4,8 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 import Home from '../routes/Home'
+import _404 from '../routes/404'
+import SubnetBlock from '../routes/SubnetBlock'
 import Subnet from '../routes/Subnet'
 import TCE from '../routes/TCE'
 
@@ -19,7 +21,12 @@ const Content = () => (
     <Routes>
       <Route index path="/" element={<Home />} />
       <Route path="/subnet" element={<Subnet />} />
+      <Route
+        path="/subnet/block/:blockHashOrNumber"
+        element={<SubnetBlock />}
+      />
       <Route path="/tce" element={<TCE />} />
+      <Route path="*" element={<_404 />} />
     </Routes>
   </Root>
 )

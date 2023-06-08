@@ -1,21 +1,29 @@
-import React, { useContext, useState } from 'react'
+import { useContext } from 'react'
 
-import SubnetSelector from '../components/SubnetSelector'
 import RouteContainer from '../components/RouteContainer'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
-import { SubnetWithId } from '../types'
-import SubnetInfo from '../components/SubnetInfo'
+import SubnetBlockInfo from '../components/SubnetBlockInfo'
 import { Space } from 'antd'
+import { useParams } from 'react-router-dom'
+import useSubnetGetBlock from '../hooks/useSubnetGetBlock'
+import SubnetNameAndLogo from '../components/SubnetNameAndLogo'
 
 const SubnetBlock = () => {
-  const { selectedToposSubnet } = useContext(SelectedNetworksContext)
-  const [selectedSubnet, setSelectedSubnet] = useState<SubnetWithId>()
+  const { blockHashOrNumber } = useParams()
+  const { selectedSubnet } = useContext(SelectedNetworksContext)
+  const { block } = useSubnetGetBlock(selectedSubnet, blockHashOrNumber)
 
   return (
-    <RouteContainer breadcrumbItems={[{ title: 'Subnets' }]}>
-      <Space direction="vertical" size={40}>
-        <SubnetSelector disabled={!selectedToposSubnet} />
-        {Boolean(selectedSubnet) && <SubnetInfo />}
+    <RouteContainer
+      breadcrumbItems={[
+        { title: 'Subnet' },
+        { title: <SubnetNameAndLogo subnet={selectedSubnet} /> },
+        { title: 'Block' },
+        { title: blockHashOrNumber },
+      ]}
+    >
+      <Space direction="vertical">
+        {Boolean(block) && <SubnetBlockInfo blockWithTransactions={block} />}
       </Space>
     </RouteContainer>
   )
