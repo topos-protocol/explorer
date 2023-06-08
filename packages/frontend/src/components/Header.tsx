@@ -23,7 +23,7 @@ const Header = () => {
                 marginRight: '2rem',
               }}
             >
-              Topos Explorer
+              Topos Explorerr
             </h3>
           </Space>
         </Link>
