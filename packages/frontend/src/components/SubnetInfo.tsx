@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useState } from 'react'
 
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import {
@@ -13,18 +13,37 @@ import {
   Space,
   Statistic,
   Table,
+  Tag,
   Typography,
 } from 'antd'
 
 import useSubnetBlockInfo from '../hooks/useSubnetSubscribeToBlocks'
 import useSubnetCertInfo from '../hooks/useSubnetCertInfo'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link as _Link, useNavigate } from 'react-router-dom'
+
+const Link = styled(_Link)`
+  animation-duration: 0.5s;
+  animation-name: animate-fade;
+  animation-fill-mode: backwards;
+
+  @keyframes animate-fade {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+`
 
 const Item = styled(List.Item)`
   padding-left: 0.5rem !important;
   border-radius: 8px;
   transition: background-color 0.2s ease;
+  animation-duration: 0.5s;
+  animation-name: animate-slide;
+  animation-fill-mode: backwards;
 
   &:hover {
     background-color: ${({ theme }) => theme.colorBgContainer};
@@ -37,6 +56,15 @@ const Item = styled(List.Item)`
   &:hover .ant-list-item-meta-title {
     color: ${({ theme }) => theme.colorPrimary} !important;
   }
+
+  @keyframes animate-slide {
+    0% {
+      transform: translateX(20px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
 `
 
 const { Search } = Input
@@ -48,6 +76,7 @@ const SubnetInfo = () => {
   const { selectedSubnet } = useContext(SelectedNetworksContext)
   const { blocks } = useSubnetBlockInfo(selectedSubnet)
   const { latestCertificate } = useSubnetCertInfo(selectedSubnet)
+  const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate()
 
   const handleSearch = useCallback((value: string) => {
@@ -98,12 +127,20 @@ const SubnetInfo = () => {
         placeholder="Search block by hash or number"
         allowClear
         onSearch={handleSearch}
-        style={{ width: 200 }}
+        style={{ width: 300 }}
       />
       <List
         dataSource={blocks}
-        pagination={{ position: 'bottom', align: 'start', pageSize: PAGE_SIZE }}
-        renderItem={(block) => (
+        pagination={{
+          position: 'bottom',
+          align: 'start',
+          onChange: (page) => {
+            setCurrentPage(page)
+          },
+          pageSize: PAGE_SIZE,
+        }}
+        rowKey="hash"
+        renderItem={(block, index) => (
           <Link to={`/subnet/block/${block.hash}`}>
             <Item
               key={block.hash}
@@ -120,7 +157,14 @@ const SubnetInfo = () => {
               ]}
             >
               <List.Item.Meta
-                title={`#${block.number}`}
+                title={
+                  <Space>
+                    <Text>#${block.number}</Text>
+                    {currentPage === 1 && index === 0 ? (
+                      <Tag color="gold">Latest</Tag>
+                    ) : null}
+                  </Space>
+                }
                 description={block.hash}
               />
             </Item>
