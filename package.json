@@ -27,5 +27,8 @@
   "homepage": "https://github.com/topos-network/explorer#readme",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@ethersproject/abstract-provider": "^5.7.0"
+  }
 }
