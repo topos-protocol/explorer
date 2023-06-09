@@ -21,7 +21,7 @@ export default function useSubnetsCertificates() {
   const client = useMemo(
     () =>
       new ApolloClient({
-        uri: 'localhost:4000',
+        uri: 'http://localhost:4000',
         cache: new InMemoryCache(),
       }),
     []
