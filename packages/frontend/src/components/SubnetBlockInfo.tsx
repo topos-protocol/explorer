@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import { BlockWithTransactions } from '@ethersproject/abstract-provider'
 import {
   Card,
@@ -8,13 +9,35 @@ import {
   Row,
   Space,
   Statistic,
+  Typography,
 } from 'antd'
-import { Transaction } from 'ethers'
+import { Transaction, ethers } from 'ethers'
 import { useContext, useState } from 'react'
 
 import Link from './Link'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
+import { CaretRightOutlined } from '@ant-design/icons'
+
+const { Text } = Typography
+
+const Item = styled(List.Item)`
+  padding-left: 0.5rem !important;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colorBgContainer};
+  }
+
+  .ant-list-item-meta-title {
+    transition: color 0.4s ease;
+  }
+
+  &:hover .ant-list-item-meta-title {
+    color: ${({ theme }) => theme.colorPrimary} !important;
+  }
+`
 
 const PAGE_SIZE = 10
 
@@ -24,7 +47,7 @@ interface Props {
 
 const SubnetBlockInfo = ({ blockWithTransactions }: Props) => {
   const { selectedSubnet } = useContext(SelectedNetworksContext)
-  const [currentPage, setCurrentPage] = useState(1)
+  console.log(blockWithTransactions)
 
   return (
     <Space direction="vertical">
@@ -72,38 +95,43 @@ const SubnetBlockInfo = ({ blockWithTransactions }: Props) => {
         Transactions
       </Divider>
       <List
-        grid={{ xs: 2, sm: 3, md: 4, lg: 4, xl: 5, xxl: 6 }}
         dataSource={blockWithTransactions?.transactions}
         pagination={{
           position: 'bottom',
           align: 'start',
-          onChange: (page: number) => {
-            setCurrentPage(page)
-          },
           pageSize: PAGE_SIZE,
         }}
-        renderItem={(tx: Transaction, index: number) =>
-          tx.hash ? (
-            <Link to={`/subnet/transaction/${tx.hash}`}>
-              <List.Item style={{ marginBottom: 0 }}>
-                <List.Item.Meta title={tx.hash} />
-              </List.Item>
-            </Link>
-          ) : (
-            <List.Item style={{ marginBottom: 0 }}>
-              <Card
-                size="small"
-                title=" "
-                type="inner"
-                style={{ opacity: 0.5 }}
-              >
-                <p style={{ visibility: 'hidden' }}>bla</p>
-                <p style={{ visibility: 'hidden' }}>bla</p>
-                <p style={{ visibility: 'hidden' }}>bla</p>
-              </Card>
-            </List.Item>
-          )
-        }
+        rowKey="hash"
+        renderItem={(transaction, index) => (
+          <Link to={`/subnet/transaction/${transaction.hash}`}>
+            <Item
+              actions={[
+                <Space key="list-vertical-date">
+                  <Text>{`${ethers.utils.formatUnits(transaction.value)} ${
+                    selectedSubnet?.currencySymbol
+                  }`}</Text>
+                </Space>,
+              ]}
+            >
+              <List.Item.Meta
+                title={
+                  <Space>
+                    <Text>
+                      #{index} | {transaction.hash}
+                    </Text>
+                  </Space>
+                }
+                description={
+                  <Space>
+                    <Text>{transaction.from}</Text>
+                    <CaretRightOutlined />
+                    <Text>{transaction.to}</Text>
+                  </Space>
+                }
+              />
+            </Item>
+          </Link>
+        )}
       />
     </Space>
   )

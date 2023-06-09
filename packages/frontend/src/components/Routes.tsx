@@ -8,6 +8,7 @@ import _404 from '../routes/404'
 import SubnetBlock from '../routes/SubnetBlock'
 import Subnet from '../routes/Subnet'
 import TCE from '../routes/TCE'
+import SubnetTransaction from '../routes/SubnetTransaction'
 
 const { Content: AntdContent } = Layout
 
@@ -24,6 +25,10 @@ const Content = () => (
       <Route
         path="/subnet/block/:blockHashOrNumber"
         element={<SubnetBlock />}
+      />
+      <Route
+        path="/subnet/transaction/:transactionHash"
+        element={<SubnetTransaction />}
       />
       <Route path="/tce" element={<TCE />} />
       <Route path="*" element={<_404 />} />

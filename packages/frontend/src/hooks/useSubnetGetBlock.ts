@@ -16,7 +16,6 @@ export default function useSubnetGetBlock(
   useEffect(
     function getBlock() {
       if (blockHashOrNumber) {
-        console.log(blockHashOrNumber)
         provider
           ?.getBlockWithTransactions(
             blockHashOrNumber.startsWith('0x')

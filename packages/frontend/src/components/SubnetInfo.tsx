@@ -143,7 +143,6 @@ const SubnetInfo = () => {
         renderItem={(block, index) => (
           <Link to={`/subnet/block/${block.hash}`}>
             <Item
-              key={block.hash}
               actions={[
                 <Space key="list-vertical-tx">
                   <Text>{block.transactions.length.toString()}</Text>

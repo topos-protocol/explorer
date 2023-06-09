@@ -1,6 +1,6 @@
 import { BlockOutlined, PartitionOutlined } from '@ant-design/icons'
 import { useTheme } from '@emotion/react'
-import { FloatButton, Modal } from 'antd'
+import { FloatButton, Modal, Space, Typography } from 'antd'
 import React, {
   useCallback,
   useContext,
@@ -15,6 +15,8 @@ import ToposSubnetSelector from './ToposSubnetSelector'
 import SubnetSelector from './SubnetSelector'
 import TCESelector from './TCESelector'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
+
+const { Text } = Typography
 
 interface ShowModals {
   subnet?: boolean
@@ -45,22 +47,43 @@ const EndpointsMenu = () => {
           icon={
             <img
               src={selectedToposSubnet ? logo : logoWhite}
-              width={22}
+              width={20}
               alt="Topos Subnet"
             />
           }
           ref={toposSubnetButtonRef}
-          tooltip="Select a Topos Subnet endpoint"
+          tooltip={
+            <Space direction="vertical" size={0}>
+              <Text>Select a Topos Subnet endpoint</Text>
+              {Boolean(selectedToposSubnet) && (
+                <Text
+                  strong
+                >{`(currently: ${selectedToposSubnet?.endpoint})`}</Text>
+              )}
+            </Space>
+          }
           onClick={() => toggleModal('toposSubnet')}
         />
         <FloatButton
           icon={
-            <BlockOutlined
-              style={{ color: selectedSubnet ? theme.colorPrimary : 'default' }}
-            />
+            selectedSubnet ? (
+              <img
+                src={selectedSubnet.logoURL}
+                width={20}
+                alt={selectedSubnet.name}
+              />
+            ) : (
+              <BlockOutlined />
+            )
           }
-          description={selectedSubnet ? selectedSubnet.name : ''}
-          tooltip="Select a subnet"
+          tooltip={
+            <Space direction="vertical" size={0}>
+              <Text>Select a subnet</Text>
+              {Boolean(selectedSubnet) && (
+                <Text strong>{`(currently: ${selectedSubnet?.name})`}</Text>
+              )}
+            </Space>
+          }
           onClick={() => toggleModal('subnet')}
         />
         <FloatButton
@@ -71,7 +94,14 @@ const EndpointsMenu = () => {
               }}
             />
           }
-          tooltip="Select a TCE endpoint"
+          tooltip={
+            <Space direction="vertical" size={0}>
+              <Text>Select a TCE endpoint</Text>
+              {Boolean(selectedTCEEndpoint) && (
+                <Text strong>{`(currently: ${selectedTCEEndpoint})`}</Text>
+              )}
+            </Space>
+          }
           onClick={() => toggleModal('tce')}
         />
       </FloatButton.Group>
