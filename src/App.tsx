@@ -2,7 +2,7 @@ import { ThemeProvider } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Alert, Layout as AntdLayout } from 'antd'
 import { BigNumber } from 'ethers'
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
 import { ErrorsContext } from './contexts/errors'
@@ -14,9 +14,10 @@ import Header from './components/Header'
 
 import 'antd/dist/reset.css'
 import useTheme from './hooks/useTheme'
-import { SubnetWithId } from './types'
+import { SubnetWithId, graphQLTypes } from './types'
 import useRegisteredSubnets from './hooks/useRegisteredSubnets'
 import { getToposSubnetFromEndpoint } from './components/ToposSubnetSelector'
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 
 const Errors = styled.div`
   margin: 1rem auto;
@@ -38,6 +39,15 @@ const App = () => {
   const [subnets, setSubnets] = React.useState<SubnetWithId[]>()
   const [errors, setErrors] = React.useState<string[]>([])
   const { registeredSubnets } = useRegisteredSubnets(selectedToposSubnet)
+
+  const apolloClient = useMemo(
+    () =>
+      new ApolloClient({
+        uri: selectedTCEEndpoint,
+        cache: new InMemoryCache(),
+      }),
+    [selectedTCEEndpoint]
+  )
 
   useEffect(function init() {
     async function _() {
@@ -81,39 +91,41 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
-        <ErrorsContext.Provider value={{ setErrors }}>
-          <SelectedNetworksContext.Provider
-            value={{
-              selectedSubnet,
-              selectedTCEEndpoint,
-              selectedToposSubnet,
-              setSelectedSubnet,
-              setSelectedTCEEndpoint,
-              setSelectedToposSubnet,
-            }}
-          >
-            <SubnetsContext.Provider value={{ data: subnets }}>
-              <Layout>
-                <Header />
-                {Boolean(errors.length) && (
-                  <Errors>
-                    {errors.map((e) => (
-                      <Alert
-                        type="error"
-                        showIcon
-                        closable
-                        message={e}
-                        key={e}
-                      />
-                    ))}
-                  </Errors>
-                )}
-                <Content />
-                <Footer />
-              </Layout>
-            </SubnetsContext.Provider>
-          </SelectedNetworksContext.Provider>
-        </ErrorsContext.Provider>
+        <ApolloProvider client={apolloClient}>
+          <ErrorsContext.Provider value={{ setErrors }}>
+            <SelectedNetworksContext.Provider
+              value={{
+                selectedSubnet,
+                selectedTCEEndpoint,
+                selectedToposSubnet,
+                setSelectedSubnet,
+                setSelectedTCEEndpoint,
+                setSelectedToposSubnet,
+              }}
+            >
+              <SubnetsContext.Provider value={{ data: subnets }}>
+                <Layout>
+                  <Header />
+                  {Boolean(errors.length) && (
+                    <Errors>
+                      {errors.map((e) => (
+                        <Alert
+                          type="error"
+                          showIcon
+                          closable
+                          message={e}
+                          key={e}
+                        />
+                      ))}
+                    </Errors>
+                  )}
+                  <Content />
+                  <Footer />
+                </Layout>
+              </SubnetsContext.Provider>
+            </SelectedNetworksContext.Provider>
+          </ErrorsContext.Provider>
+        </ApolloProvider>
       </BrowserRouter>
     </ThemeProvider>
   )

@@ -20,8 +20,8 @@ const TCESelector = () => {
   const { selectedTCEEndpoint, setSelectedTCEEndpoint } = useContext(
     SelectedNetworksContext
   )
-  const [mainnetItems] = useState(['tce.zkfoundation.io'])
-  const [items, setItems] = useState(['localhost:1340'])
+  const [mainnetItems] = useState(['tce.devnet-1.topos.technology'])
+  const [items, setItems] = useState(['http://localhost:4000'])
   const [name, setName] = useState('')
   const inputRef = useRef<InputRef>(null)
   const [form] = Form.useForm()
@@ -56,12 +56,15 @@ const TCESelector = () => {
   )
 
   return (
-    <Form layout="vertical" form={form}>
+    <Form
+      layout="vertical"
+      form={form}
+      initialValues={{ tceEndpoint: selectedTCEEndpoint }}
+    >
       <Form.Item name="tceEndpoint" label="TCE endpoint">
         <Select
           style={{ width: 300 }}
           placeholder="Select a TCE endpoint"
-          defaultValue={selectedTCEEndpoint}
           onChange={onValueChange}
           dropdownRender={(menu) => (
             <>

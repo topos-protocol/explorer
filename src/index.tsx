@@ -1,9 +1,9 @@
+import { ConfigProvider, theme } from 'antd'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
 import App from './App'
 import reportWebVitals from './reportWebVitals'
-import { ConfigProvider, theme } from 'antd'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
@@ -16,7 +16,7 @@ root.render(
           colorBgHeader: 'transparent',
         },
         Menu: {
-          colorItemBg: 'transparent',
+          itemBg: 'transparent',
         },
       },
     }}

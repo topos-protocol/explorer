@@ -14,10 +14,12 @@ type Link = {
   weight: number
 }
 
-const CertificateGraph = function () {
+const CrossSubnetMessagesGraph = function () {
   const { certificates } = useSubnetsCertificates()
   const { data: subnets } = useContext(SubnetsContext)
   const graphElement = useRef<HTMLDivElement>(null)
+
+  console.log(certificates)
 
   React.useEffect(
     function renderCertificates() {
@@ -31,12 +33,12 @@ const CertificateGraph = function () {
             img.src = subnet.logoURL
             return { ...subnet, img }
           }),
-          links: certificates.reduce((acc: Link[], curr) => {
-            curr.targetSubnetsList.forEach((t) => {
+          links: (certificates || []).reduce((acc: Link[], curr) => {
+            curr.targetSubnets.forEach((t) => {
               acc.push({
-                source: curr.sourceSubnetId!.value.toString(),
+                source: curr.sourceSubnetId,
                 target: t.value.toString(),
-                certificateId: curr.id!.value.toString(),
+                certificateId: curr.txRootHash, //TODO: Find a wa to get certId
                 weight: 1,
               })
             })
@@ -47,7 +49,7 @@ const CertificateGraph = function () {
 
         // 1. assign each link a nodePairId that combines their source and target independent of the links direction
         // 2. group links together that share the same two nodes or are self-loops
-        data.links.forEach((link) => {
+        data.links?.forEach((link) => {
           link.nodePairId =
             link.source <= link.target
               ? link.source + '_' + link.target
@@ -138,4 +140,4 @@ const CertificateGraph = function () {
   return <div ref={graphElement} />
 }
 
-export default CertificateGraph
+export default CrossSubnetMessagesGraph

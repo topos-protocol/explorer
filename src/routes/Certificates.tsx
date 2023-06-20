@@ -1,16 +1,16 @@
+import { Alert } from 'antd'
 import React, { useContext } from 'react'
 
 import RouteContainer from '../components/RouteContainer'
-import CertificateGraph from '../components/CertificateGraph'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
-import { Alert } from 'antd'
+import CertificatesList from '../components/CertificatesList'
 
-const TCE = () => {
+const Certificates = () => {
   const { selectedTCEEndpoint } = useContext(SelectedNetworksContext)
   return (
-    <RouteContainer breadcrumbItems={[{ title: 'TCE' }]}>
+    <RouteContainer breadcrumbItems={[{ title: 'Certificates' }]}>
       {Boolean(selectedTCEEndpoint) ? (
-        <CertificateGraph />
+        <CertificatesList />
       ) : (
         <Alert message="Please select a TCE endpoint first!" type="error" />
       )}
@@ -18,4 +18,4 @@ const TCE = () => {
   )
 }
 
-export default TCE
+export default Certificates
