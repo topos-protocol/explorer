@@ -13,7 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n  query Certificate($fromSourceCheckpoint: SourceCheckpoint!) {\n    certificates(fromSourceCheckpoint: $fromSourceCheckpoint, first: 10) {\n      prevId\n      proof\n      signature\n      sourceSubnetId\n      stateRoot\n      targetSubnets {\n        value\n      }\n      txRootHash\n      verifier\n    }\n  }\n": types.CertificateDocument,
+    "\n  query Certificate($fromSourceCheckpoint: SourceCheckpoint!, $limit: Int!) {\n    certificates(fromSourceCheckpoint: $fromSourceCheckpoint, first: $limit) {\n      prevId\n      id\n      proof\n      signature\n      sourceSubnetId\n      stateRoot\n      targetSubnets {\n        value\n      }\n      txRootHash\n      verifier\n    }\n  }\n": types.CertificateDocument,
 };
 
 /**
@@ -33,7 +33,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query Certificate($fromSourceCheckpoint: SourceCheckpoint!) {\n    certificates(fromSourceCheckpoint: $fromSourceCheckpoint, first: 10) {\n      prevId\n      proof\n      signature\n      sourceSubnetId\n      stateRoot\n      targetSubnets {\n        value\n      }\n      txRootHash\n      verifier\n    }\n  }\n"): (typeof documents)["\n  query Certificate($fromSourceCheckpoint: SourceCheckpoint!) {\n    certificates(fromSourceCheckpoint: $fromSourceCheckpoint, first: 10) {\n      prevId\n      proof\n      signature\n      sourceSubnetId\n      stateRoot\n      targetSubnets {\n        value\n      }\n      txRootHash\n      verifier\n    }\n  }\n"];
+export function graphql(source: "\n  query Certificate($fromSourceCheckpoint: SourceCheckpoint!, $limit: Int!) {\n    certificates(fromSourceCheckpoint: $fromSourceCheckpoint, first: $limit) {\n      prevId\n      id\n      proof\n      signature\n      sourceSubnetId\n      stateRoot\n      targetSubnets {\n        value\n      }\n      txRootHash\n      verifier\n    }\n  }\n"): (typeof documents)["\n  query Certificate($fromSourceCheckpoint: SourceCheckpoint!, $limit: Int!) {\n    certificates(fromSourceCheckpoint: $fromSourceCheckpoint, first: $limit) {\n      prevId\n      id\n      proof\n      signature\n      sourceSubnetId\n      stateRoot\n      targetSubnets {\n        value\n      }\n      txRootHash\n      verifier\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

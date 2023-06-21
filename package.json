@@ -7,6 +7,7 @@
     "build": "tsc && vite build",
     "build:graphql": "graphql-codegen",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preinstall": "npx npm-force-resolutions",
     "preview": "vite preview",
     "start": "tsc && vite build --mode development --watch --sourcemap true",
     "test:e2e": "env-cmd --silent cypress run --browser chrome --headed"
@@ -28,6 +29,9 @@
     "url": "https://github.com/topos-protocol/explorer/issues"
   },
   "homepage": "https://github.com/topos-protocol/explorer#readme",
+  "resolutions": {
+    "@types/react": "17.0.30"
+  },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@apollo/client": "^3.7.15",
@@ -51,7 +55,7 @@
     "@graphql-codegen/client-preset": "^4.0.1",
     "@testing-library/react": "14.0.0",
     "@types/jest": "^29.5.1",
-    "@types/react": "^18.0.28",
+    "@types/react": "^18.2.13",
     "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",

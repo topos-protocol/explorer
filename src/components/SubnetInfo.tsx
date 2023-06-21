@@ -18,9 +18,11 @@ import {
 } from 'antd'
 
 import useSubnetBlockInfo from '../hooks/useSubnetSubscribeToBlocks'
-import useSubnetCertInfo from '../hooks/useSubnetCertInfo'
+import useSubnetsCertificates from '../hooks/useSubnetsCertificates'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
 import { Link as _Link, useNavigate } from 'react-router-dom'
+import { SubnetsContext } from '../contexts/subnets'
+import { CaretRightOutlined } from '@ant-design/icons'
 
 const Link = styled(_Link)`
   animation-duration: 0.5s;
@@ -74,8 +76,11 @@ const PAGE_SIZE = 5
 
 const SubnetInfo = () => {
   const { selectedSubnet } = useContext(SelectedNetworksContext)
+  const { data: subnets } = useContext(SubnetsContext)
   const { blocks } = useSubnetBlockInfo(selectedSubnet)
-  const { latestCertificate } = useSubnetCertInfo(selectedSubnet)
+  const { certificates } = useSubnetsCertificates({
+    sourceSubnetIds: selectedSubnet ? [selectedSubnet.id] : undefined,
+  })
   const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate()
 
@@ -113,63 +118,127 @@ const SubnetInfo = () => {
         </Col>
         <Col span={8}>
           <Card>
-            <Statistic
+            {/* <Statistic
               title="Latest certificate"
               value={latestCertificate?.position}
-            />
+            /> */}
           </Card>
         </Col>
       </Row>
-      <Divider orientation="left" style={{ margin: '2rem 0' }}>
-        Latest Blocks
-      </Divider>
-      <Search
-        placeholder="Search block by hash or number"
-        allowClear
-        onSearch={handleSearch}
-        style={{ width: 300 }}
-      />
-      <List
-        dataSource={blocks}
-        pagination={{
-          position: 'bottom',
-          align: 'start',
-          onChange: (page) => {
-            setCurrentPage(page)
-          },
-          pageSize: PAGE_SIZE,
-        }}
-        rowKey="hash"
-        renderItem={(block, index) => (
-          <Link to={`/subnet/block/${block.hash}`}>
-            <Item
-              actions={[
-                <Space key="list-vertical-tx">
-                  <Text>{block.transactions.length.toString()}</Text>
-                  <Text>tx</Text>
-                </Space>,
-                <Space key="list-vertical-date">
-                  <Text>
-                    {new Date(block.timestamp * 1_000).toLocaleString()}
-                  </Text>
-                </Space>,
-              ]}
-            >
-              <List.Item.Meta
-                title={
-                  <Space>
-                    <Text>#${block.number}</Text>
-                    {currentPage === 1 && index === 0 ? (
-                      <Tag color="gold">Latest</Tag>
-                    ) : null}
-                  </Space>
-                }
-                description={block.hash}
-              />
-            </Item>
-          </Link>
-        )}
-      />
+      <Row gutter={32}>
+        <Col md={24} lg={12}>
+          <Divider orientation="left" style={{ margin: '2rem 0' }}>
+            Latest Blocks
+          </Divider>
+          <Search
+            placeholder="Search block by hash or number"
+            allowClear
+            onSearch={handleSearch}
+            style={{ width: 300 }}
+          />
+          <List
+            dataSource={blocks}
+            pagination={{
+              position: 'bottom',
+              align: 'start',
+              onChange: (page) => {
+                setCurrentPage(page)
+              },
+              pageSize: PAGE_SIZE,
+            }}
+            rowKey="hash"
+            renderItem={(block, index) => (
+              <Link to={`/subnet/block/${block.hash}`}>
+                <Item
+                  actions={[
+                    <Space key="list-vertical-tx">
+                      <Text>{block.transactions.length.toString()}</Text>
+                      <Text>tx</Text>
+                    </Space>,
+                    <Space key="list-vertical-date">
+                      <Text>
+                        {new Date(block.timestamp * 1_000).toLocaleString()}
+                      </Text>
+                    </Space>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={
+                      <Space>
+                        <Text>{block.number}</Text>
+                        {currentPage === 1 && index === 0 ? (
+                          <Tag color="gold">Latest</Tag>
+                        ) : null}
+                      </Space>
+                    }
+                    description={block.hash}
+                  />
+                </Item>
+              </Link>
+            )}
+          />
+        </Col>
+        <Col md={24} lg={12}>
+          <Divider orientation="left" style={{ margin: '2rem 0' }}>
+            Latest Certificates
+          </Divider>
+          <Search
+            placeholder="Search certificate by id"
+            allowClear
+            onSearch={handleSearch}
+            style={{ width: 300 }}
+          />
+          <List
+            dataSource={certificates}
+            pagination={{
+              position: 'bottom',
+              align: 'start',
+              onChange: (page) => {
+                setCurrentPage(page)
+              },
+              pageSize: PAGE_SIZE,
+            }}
+            rowKey="prevId"
+            renderItem={(certificate, index) => (
+              <Link to={`/certificates/${certificate.stateRoot}`}>
+                <Item>
+                  <List.Item.Meta
+                    title={
+                      <Space>
+                        <Text>{certificate.id}</Text>
+                        {currentPage === 1 && index === 0 ? (
+                          <Tag color="gold">Latest</Tag>
+                        ) : null}
+                      </Space>
+                    }
+                    description={
+                      <Space>
+                        <SubnetNameAndLogo
+                          subnet={subnets?.find(
+                            (s) => s.id === certificate.sourceSubnetId
+                          )}
+                        />
+                        {Boolean(certificate.targetSubnets.length) && (
+                          <Space>
+                            <CaretRightOutlined />
+                            {certificate.targetSubnets.map((subnetId) => (
+                              <SubnetNameAndLogo
+                                subnet={subnets?.find(
+                                  (s) => s.id === subnetId.value
+                                )}
+                              />
+                            ))}
+                          </Space>
+                        )}
+                      </Space>
+                    }
+                  />
+                </Item>
+              </Link>
+            )}
+          />
+        </Col>
+      </Row>
     </Space>
   )
 }
