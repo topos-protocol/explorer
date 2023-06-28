@@ -213,12 +213,8 @@ const SubnetInfo = () => {
                     }
                     description={
                       <Space>
-                        <SubnetNameAndLogo
-                          subnet={subnets?.find(
-                            (s) => s.id === certificate.sourceSubnetId
-                          )}
-                        />
-                        {Boolean(certificate.targetSubnets.length) && (
+                        <Text>Target subnets:</Text>
+                        {Boolean(certificate.targetSubnets.length) ? (
                           <Space>
                             <CaretRightOutlined />
                             {certificate.targetSubnets.map((subnetId) => (
@@ -229,6 +225,8 @@ const SubnetInfo = () => {
                               />
                             ))}
                           </Space>
+                        ) : (
+                          <Tag>None</Tag>
                         )}
                       </Space>
                     }
