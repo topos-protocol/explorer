@@ -1,16 +1,16 @@
 import * as grpc from '@grpc/grpc-js'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { SubnetId } from '@topos-network/topos-grpc-client-stub/generated/topos/shared/v1/subnet_pb'
+import { SubnetId } from '@topos-protocol/topos-grpc-client-stub/generated/topos/shared/v1/subnet_pb'
 import {
   GetSourceHeadRequest,
   WatchCertificatesRequest,
-} from '@topos-network/topos-grpc-client-stub/generated/topos/tce/v1/api_pb'
-import { APIServiceClient } from '@topos-network/topos-grpc-client-stub/generated/topos/tce/v1/api_grpc_pb'
+} from '@topos-protocol/topos-grpc-client-stub/generated/topos/tce/v1/api_pb'
+import { APIServiceClient } from '@topos-protocol/topos-grpc-client-stub/generated/topos/tce/v1/api_grpc_pb'
 import { Observable } from 'rxjs'
-import { UUID } from '@topos-network/topos-grpc-client-stub/generated/topos/shared/v1/uuid_pb'
-import { Checkpoints } from '@topos-network/topos-grpc-client-stub/generated/topos/shared/v1/checkpoints_pb'
-import { WatchCertificatesResponse } from '@topos-network/topos-grpc-client-stub/generated/topos/tce/v1/api_pb'
+import { UUID } from '@topos-protocol/topos-grpc-client-stub/generated/topos/shared/v1/uuid_pb'
+import { Checkpoints } from '@topos-protocol/topos-grpc-client-stub/generated/topos/shared/v1/checkpoints_pb'
+import { WatchCertificatesResponse } from '@topos-protocol/topos-grpc-client-stub/generated/topos/tce/v1/api_pb'
 
 @Injectable()
 export class GRPCService {

@@ -1,5 +1,5 @@
 {
-  "name": "@topos-network/explorer",
+  "name": "@topos-protocol/explorer",
   "version": "1.0.0",
   "description": "Topos Explorer is the web app to explore the Topos ecosystem 🚀",
   "main": "index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/topos-network/explorer.git"
+    "url": "git+https://github.com/topos-protocol/explorer.git"
   },
   "keywords": [
     "blockchain",
@@ -22,9 +22,9 @@
   "author": "Sebastien Dan <sebastien.dan@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/topos-network/explorer/issues"
+    "url": "https://github.com/topos-protocol/explorer/issues"
   },
-  "homepage": "https://github.com/topos-network/explorer#readme",
+  "homepage": "https://github.com/topos-protocol/explorer#readme",
   "workspaces": [
     "packages/*"
   ],
