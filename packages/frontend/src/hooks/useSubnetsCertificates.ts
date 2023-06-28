@@ -1,5 +1,5 @@
-import { Certificate } from '@topos-network/topos-grpc-client-stub/generated/topos/uci/v1/certification_pb'
-import { WatchCertificatesResponse } from '@topos-network/topos-grpc-client-stub/generated/topos/tce/v1/api_pb'
+import { Certificate } from '@topos-protocol/topos-grpc-client-stub/generated/topos/uci/v1/certification_pb'
+import { WatchCertificatesResponse } from '@topos-protocol/topos-grpc-client-stub/generated/topos/tce/v1/api_pb'
 import React, { useEffect } from 'react'
 
 import { ErrorsContext } from '../contexts/errors'
