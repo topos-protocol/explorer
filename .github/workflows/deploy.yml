@@ -27,6 +27,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_SUBNET_REGISTRATOR_CONTRACT_ADDRESS: ${{ vars.VITE_SUBNET_REGISTRATOR_CONTRACT_ADDRESS }}
+          VITE_TOPOS_CORE_CONTRACT_ADDRESS: ${{ vars.VITE_TOPOS_CORE_CONTRACT_ADDRESS }}
 
       - name: Configure AWS credentials for devnet-1 account
         uses: aws-actions/configure-aws-credentials@v1
