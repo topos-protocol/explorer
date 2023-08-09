@@ -1,13 +1,14 @@
 import styled from '@emotion/styled'
 import { Layout } from 'antd'
 import React from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes as RouterRoutes } from 'react-router-dom'
 
 import Home from '../routes/Home'
 import _404 from '../routes/404'
 import SubnetBlock from '../routes/SubnetBlock'
 import Subnet from '../routes/Subnet'
-import TCE from '../routes/TCE'
+import Certificates from '../routes/Certificates'
+import CrossSubnetMessages from '../routes/CrossSubnetMessages'
 import SubnetTransaction from '../routes/SubnetTransaction'
 
 const { Content: AntdContent } = Layout
@@ -17,9 +18,9 @@ const Root = styled(AntdContent)`
   padding: 1.5rem;
 `
 
-const Content = () => (
+const Routes = () => (
   <Root>
-    <Routes>
+    <RouterRoutes>
       <Route index path="/" element={<Home />} />
       <Route path="/subnet" element={<Subnet />} />
       <Route
@@ -30,10 +31,11 @@ const Content = () => (
         path="/subnet/transaction/:transactionHash"
         element={<SubnetTransaction />}
       />
-      <Route path="/tce" element={<TCE />} />
+      <Route path="/certificates" element={<Certificates />} />
+      <Route path="/cross-subnet-messages" element={<CrossSubnetMessages />} />
       <Route path="*" element={<_404 />} />
-    </Routes>
+    </RouterRoutes>
   </Root>
 )
 
-export default Content
+export default Routes

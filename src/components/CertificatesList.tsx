@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
 import { useCallback, useContext, useState } from 'react'
 
-import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import {
   Card,
   Col,
@@ -17,10 +16,11 @@ import {
   Typography,
 } from 'antd'
 
-import useSubnetBlockInfo from '../hooks/useSubnetSubscribeToBlocks'
-import useSubnetCertInfo from '../hooks/useSubnetCertInfo'
-import SubnetNameAndLogo from './SubnetNameAndLogo'
 import { Link as _Link, useNavigate } from 'react-router-dom'
+import useSubnetsCertificates from '../hooks/useSubnetsCertificates'
+import { SubnetsContext } from '../contexts/subnets'
+import SubnetNameAndLogo from './SubnetNameAndLogo'
+import { CaretRightOutlined } from '@ant-design/icons'
 
 const Link = styled(_Link)`
   animation-duration: 0.5s;
@@ -72,65 +72,36 @@ const { Text } = Typography
 
 const PAGE_SIZE = 5
 
-const SubnetInfo = () => {
-  const { selectedSubnet } = useContext(SelectedNetworksContext)
-  const { blocks } = useSubnetBlockInfo(selectedSubnet)
-  const { latestCertificate } = useSubnetCertInfo(selectedSubnet)
+const CertificatesList = () => {
+  const { certificates } = useSubnetsCertificates()
+  const { data: subnets } = useContext(SubnetsContext)
   const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate()
 
+  console.log(certificates)
+
   const handleSearch = useCallback((value: string) => {
-    navigate(`/subnet/block/${value}`)
+    navigate(`/certificates/${value}`)
   }, [])
 
   return (
     <Space direction="vertical">
       <Divider orientation="left" style={{ margin: '2rem 0' }}>
-        Info
+        Certificates
       </Divider>
       <Descriptions>
         <Descriptions.Item label="Name">
-          <SubnetNameAndLogo subnet={selectedSubnet} />
-        </Descriptions.Item>
-        <Descriptions.Item label="Subnet Id" span={2}>
-          {selectedSubnet?.id}
-        </Descriptions.Item>
-        <Descriptions.Item label="Chain Id">
-          {selectedSubnet?.chainId.toString()}
-        </Descriptions.Item>
-        <Descriptions.Item label="Currency">
-          {selectedSubnet?.currencySymbol}
-        </Descriptions.Item>
-        <Descriptions.Item label="RPC Endpoint">
-          {selectedSubnet?.endpoint}
+          <div>Test</div>
         </Descriptions.Item>
       </Descriptions>
-      <Row gutter={16}>
-        <Col span={8}>
-          <Card>
-            <Statistic title="Latest block" value={blocks[0]?.number} />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Statistic
-              title="Latest certificate"
-              value={latestCertificate?.position}
-            />
-          </Card>
-        </Col>
-      </Row>
-      <Divider orientation="left" style={{ margin: '2rem 0' }}>
-        Latest Blocks
-      </Divider>
       <Search
-        placeholder="Search block by hash or number"
+        placeholder="Search certificate by id"
         allowClear
         onSearch={handleSearch}
         style={{ width: 300 }}
       />
       <List
-        dataSource={blocks}
+        dataSource={certificates}
         pagination={{
           position: 'bottom',
           align: 'start',
@@ -139,32 +110,51 @@ const SubnetInfo = () => {
           },
           pageSize: PAGE_SIZE,
         }}
-        rowKey="hash"
-        renderItem={(block, index) => (
-          <Link to={`/subnet/block/${block.hash}`}>
+        rowKey="prevId"
+        renderItem={(certificate, index) => (
+          <Link to={`/certificates/${certificate.stateRoot}`}>
             <Item
               actions={[
                 <Space key="list-vertical-tx">
-                  <Text>{block.transactions.length.toString()}</Text>
-                  <Text>tx</Text>
+                  <Text>{certificate.targetSubnets.length}</Text>
+                  <Text>target subnets</Text>
                 </Space>,
                 <Space key="list-vertical-date">
-                  <Text>
-                    {new Date(block.timestamp * 1_000).toLocaleString()}
-                  </Text>
+                  <Text>Verifier</Text>
+                  <Text>{certificate.verifier}</Text>
                 </Space>,
               ]}
             >
               <List.Item.Meta
                 title={
                   <Space>
-                    <Text>#${block.number}</Text>
+                    <Text>{certificate.id}</Text>
                     {currentPage === 1 && index === 0 ? (
                       <Tag color="gold">Latest</Tag>
                     ) : null}
                   </Space>
                 }
-                description={block.hash}
+                description={
+                  <Space>
+                    <SubnetNameAndLogo
+                      subnet={subnets?.find(
+                        (s) => s.id === certificate.sourceSubnetId
+                      )}
+                    />
+                    {Boolean(certificate.targetSubnets.length) && (
+                      <Space>
+                        <CaretRightOutlined />
+                        {certificate.targetSubnets.map((subnetId) => (
+                          <SubnetNameAndLogo
+                            subnet={subnets?.find(
+                              (s) => s.id === subnetId.value
+                            )}
+                          />
+                        ))}
+                      </Space>
+                    )}
+                  </Space>
+                }
               />
             </Item>
           </Link>
@@ -174,4 +164,4 @@ const SubnetInfo = () => {
   )
 }
 
-export default SubnetInfo
+export default CertificatesList

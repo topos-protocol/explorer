@@ -13,9 +13,16 @@ const Menu = () => {
         rootpath: '/subnet',
       },
       {
-        key: 'tce',
-        label: <NavLink to="/tce">TCE</NavLink>,
-        rootpath: '/tce',
+        key: 'certificates',
+        label: <NavLink to="/certificates">Certificates</NavLink>,
+        rootpath: '/certificates',
+      },
+      {
+        key: 'cross-subnet-messages',
+        label: (
+          <NavLink to="/cross-subnet-messages">Cross-Subnet Messages</NavLink>
+        ),
+        rootpath: '/cross-subnet-messages',
       },
     ],
     []

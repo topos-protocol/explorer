@@ -1,14 +1,14 @@
+import { Alert } from 'antd'
 import React, { useContext } from 'react'
 
 import RouteContainer from '../components/RouteContainer'
-import CertificateGraph from '../components/CertificateGraph'
+import CertificateGraph from '../components/CrossSubnetMessagesGraph'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
-import { Alert } from 'antd'
 
-const TCE = () => {
+const CrossSubnetMessages = () => {
   const { selectedTCEEndpoint } = useContext(SelectedNetworksContext)
   return (
-    <RouteContainer breadcrumbItems={[{ title: 'TCE' }]}>
+    <RouteContainer breadcrumbItems={[{ title: 'Cross-Subnet Messages' }]}>
       {Boolean(selectedTCEEndpoint) ? (
         <CertificateGraph />
       ) : (
@@ -18,4 +18,4 @@ const TCE = () => {
   )
 }
 
-export default TCE
+export default CrossSubnetMessages

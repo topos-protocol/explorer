@@ -1,12 +1,16 @@
 {
   "name": "@topos-protocol/explorer",
   "version": "1.0.0",
-  "description": "Topos Explorer is the web app to explore the Topos ecosystem 🚀",
   "main": "index.js",
   "scripts": {
-    "backend:start": "npm run start:dev --workspace backend",
-    "frontend:build": "npm run build --workspace frontend",
-    "frontend:start": "npm run start --workspace frontend"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:graphql": "graphql-codegen",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preinstall": "npx npm-force-resolutions",
+    "preview": "vite preview",
+    "start": "tsc && vite build --mode development --watch --sourcemap true",
+    "test:e2e": "env-cmd --silent cypress run --browser chrome --headed"
   },
   "repository": {
     "type": "git",
@@ -25,10 +29,46 @@
     "url": "https://github.com/topos-protocol/explorer/issues"
   },
   "homepage": "https://github.com/topos-protocol/explorer#readme",
-  "workspaces": [
-    "packages/*"
-  ],
+  "resolutions": {
+    "@types/react": "17.0.30"
+  },
   "dependencies": {
-    "@ethersproject/abstract-provider": "^5.7.0"
+    "@ant-design/icons": "^5.0.1",
+    "@apollo/client": "^3.7.15",
+    "@emotion/react": "11.10.6",
+    "@emotion/styled": "11.10.6",
+    "@topos-protocol/topos-smart-contracts": "^1.1.3",
+    "3d-force-graph": "^1.71.4",
+    "antd": "^5.6.0",
+    "axios": "^1.4.0",
+    "ethers": "^5.7.2",
+    "force-graph": "^1.43.1",
+    "graphql": "^16.6.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "^6.11.1",
+    "three-spritetext": "^1.8.1",
+    "web-vitals": "^3.3.1"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^4.0.1",
+    "@graphql-codegen/client-preset": "^4.0.1",
+    "@testing-library/react": "14.0.0",
+    "@types/jest": "^29.5.1",
+    "@types/react": "^18.2.13",
+    "@types/react-dom": "^18.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "@vitejs/plugin-react-swc": "^3.3.2",
+    "@vitest/coverage-c8": "~0.25.8",
+    "@vitest/ui": "^0.25.8",
+    "cypress": "^12.10.0",
+    "env-cmd": "^10.1.0",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.3.4",
+    "start-server-and-test": "^2.0.0",
+    "typescript": "^5.0.4",
+    "vite": "^4.3.0"
   }
 }
