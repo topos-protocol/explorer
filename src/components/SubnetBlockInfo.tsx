@@ -11,8 +11,8 @@ import {
   Statistic,
   Typography,
 } from 'antd'
-import { Transaction, ethers } from 'ethers'
-import { useContext, useState } from 'react'
+import { ethers } from 'ethers'
+import { useContext } from 'react'
 
 import Link from './Link'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'

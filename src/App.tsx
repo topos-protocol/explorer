@@ -1,7 +1,6 @@
 import { ThemeProvider } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Alert, Layout as AntdLayout } from 'antd'
-import { BigNumber } from 'ethers'
 import React, { useEffect, useMemo } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
@@ -14,7 +13,7 @@ import Header from './components/Header'
 
 import 'antd/dist/reset.css'
 import useTheme from './hooks/useTheme'
-import { SubnetWithId, graphQLTypes } from './types'
+import { SubnetWithId } from './types'
 import useRegisteredSubnets from './hooks/useRegisteredSubnets'
 import { getToposSubnetFromEndpoint } from './components/ToposSubnetSelector'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'

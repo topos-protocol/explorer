@@ -12,7 +12,6 @@ import {
   Row,
   Space,
   Statistic,
-  Table,
   Tag,
   Typography,
 } from 'antd'

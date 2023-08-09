@@ -1,11 +1,11 @@
 import { Menu as AntdMenu } from 'antd'
-import React, { useContext } from 'react'
+import { useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
 const Menu = () => {
   const { pathname } = useLocation()
 
-  const items = React.useMemo(
+  const items = useMemo(
     () => [
       {
         key: 'subnet',
@@ -28,7 +28,7 @@ const Menu = () => {
     []
   )
 
-  const selectedKeys = React.useMemo(
+  const selectedKeys = useMemo(
     () =>
       items
         .filter((i) => pathname.indexOf(i.rootpath) !== -1)

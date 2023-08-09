@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client'
 import { BigNumber } from 'ethers'
 
 export interface Subnet {

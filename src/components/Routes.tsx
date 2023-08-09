@@ -1,6 +1,5 @@
 import styled from '@emotion/styled'
 import { Layout } from 'antd'
-import React from 'react'
 import { Route, Routes as RouterRoutes } from 'react-router-dom'
 
 import Home from '../routes/Home'

@@ -20,13 +20,23 @@ export default function useSubnetGetTransactionAndReceipt(
   useEffect(
     function getBlock() {
       if (transactionHash) {
-        provider?.getTransaction(transactionHash).then((transaction) => {
-          setTransaction(transaction)
-        })
+        provider
+          ?.getTransaction(transactionHash)
+          .then((transaction) => {
+            setTransaction(transaction)
+          })
+          .catch((error) => {
+            setErrors((e) => [...e, error])
+          })
 
-        provider?.getTransactionReceipt(transactionHash).then((receipt) => {
-          setReceipt(receipt)
-        })
+        provider
+          ?.getTransactionReceipt(transactionHash)
+          .then((receipt) => {
+            setReceipt(receipt)
+          })
+          .catch((error) => {
+            setErrors((e) => [...e, error])
+          })
       }
     },
     [provider, transactionHash]

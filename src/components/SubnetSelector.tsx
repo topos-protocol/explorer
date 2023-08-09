@@ -1,13 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Divider, Input, Select, Space, Button, Typography, Form } from 'antd'
+import { Divider, Input, Select, Space, Button, Form } from 'antd'
 import type { InputRef } from 'antd'
-import React, {
-  useContext,
-  useState,
-  useRef,
-  useCallback,
-  useEffect,
-} from 'react'
+import React, { useContext, useState, useRef, useCallback } from 'react'
 
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import { SubnetsContext } from '../contexts/subnets'

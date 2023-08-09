@@ -25,7 +25,11 @@ export default function useSubnetSubscribeToBlocks(subnet?: Subnet) {
         appendBlock(blockNumber)
       }
 
-      provider?.on('block', listener)
+      try {
+        provider?.on('block', listener)
+      } catch (error: any) {
+        setErrors((e) => [...e, error])
+      }
 
       return function cleanup() {
         provider?.removeListener('block', listener)

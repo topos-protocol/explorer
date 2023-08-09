@@ -2,16 +2,11 @@ import styled from '@emotion/styled'
 import { useCallback, useContext, useState } from 'react'
 
 import {
-  Card,
-  Col,
   Descriptions,
   Divider,
   Input,
   List,
-  Row,
   Space,
-  Statistic,
-  Table,
   Tag,
   Typography,
 } from 'antd'

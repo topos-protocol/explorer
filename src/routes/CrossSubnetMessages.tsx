@@ -1,5 +1,5 @@
 import { Alert } from 'antd'
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 
 import RouteContainer from '../components/RouteContainer'
 import CertificateGraph from '../components/CrossSubnetMessagesGraph'

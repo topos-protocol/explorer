@@ -11,13 +11,12 @@ import {
   Statistic,
   Typography,
 } from 'antd'
-import { Transaction, ethers } from 'ethers'
-import { useContext, useState } from 'react'
+import { ethers } from 'ethers'
+import { useContext } from 'react'
 
 import Link from './Link'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
-import { CaretRightOutlined } from '@ant-design/icons'
 import {
   TransactionReceipt,
   TransactionResponse,
@@ -120,7 +119,7 @@ const SubnetTransactionInfo = ({ receipt, transaction }: Props) => {
           pageSize: PAGE_SIZE,
         }}
         rowKey="logIndex"
-        renderItem={(log, index) => (
+        renderItem={(log) => (
           <Item>
             <List.Item.Meta
               title={

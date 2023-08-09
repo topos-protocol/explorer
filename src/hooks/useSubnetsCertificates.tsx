@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client'
 import React from 'react'
 
 import { graphql } from '../__generated__/gql'
-import { ErrorsContext } from '../contexts/errors'
+// import { ErrorsContext } from '../contexts/errors'
 import { SubnetsContext } from '../contexts/subnets'
 
 const DEFAULT_SKIP = 0
@@ -33,13 +33,13 @@ interface Options {
 }
 
 export default function useSubnetsCertificates(
-  { limit, skip, sourceSubnetIds }: Options = {
+  { limit, sourceSubnetIds }: Options = {
     limit: DEFAULT_LIMIT,
     skip: DEFAULT_SKIP,
     sourceSubnetIds: undefined,
   }
 ) {
-  const { setErrors } = React.useContext(ErrorsContext)
+  // const { setErrors } = React.useContext(ErrorsContext)
   const { data: subnets } = React.useContext(SubnetsContext)
 
   const { error, loading, data } = useQuery(GET_CERTIFICATES, {

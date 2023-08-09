@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
 import { CoffeeOutlined } from '@ant-design/icons'
 import { Result as _Result } from 'antd'
-import React from 'react'
 
 import Link from '../components/Link'
 

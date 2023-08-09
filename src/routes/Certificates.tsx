@@ -1,5 +1,5 @@
 import { Alert, Space } from 'antd'
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 
 import RouteContainer from '../components/RouteContainer'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'

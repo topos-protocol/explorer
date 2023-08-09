@@ -1,12 +1,10 @@
-import { Alert, Avatar, Space, Typography } from 'antd'
-import React, { useContext } from 'react'
+import { Alert, Space } from 'antd'
+import { useContext } from 'react'
 
 import RouteContainer from '../components/RouteContainer'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import SubnetInfo from '../components/SubnetInfo'
 import SubnetNameAndLogo from '../components/SubnetNameAndLogo'
-
-const { Text } = Typography
 
 const Subnet = () => {
   const { selectedSubnet } = useContext(SelectedNetworksContext)

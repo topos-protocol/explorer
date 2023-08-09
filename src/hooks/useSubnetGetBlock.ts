@@ -25,6 +25,9 @@ export default function useSubnetGetBlock(
           .then((block) => {
             setBlock(block)
           })
+          .catch((error) => {
+            setErrors((e) => [...e, error])
+          })
       }
     },
     [provider, blockHashOrNumber]
