@@ -29,9 +29,6 @@
     "url": "https://github.com/topos-protocol/explorer/issues"
   },
   "homepage": "https://github.com/topos-protocol/explorer#readme",
-  "resolutions": {
-    "@types/react": "17.0.30"
-  },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@apollo/client": "^3.7.15",
@@ -55,8 +52,8 @@
     "@graphql-codegen/client-preset": "^4.0.1",
     "@testing-library/react": "14.0.0",
     "@types/jest": "^29.5.1",
-    "@types/react": "^18.2.13",
-    "@types/react-dom": "^18.0.11",
+    "@types/react": "^18.2.19",
+    "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "@vitejs/plugin-react-swc": "^3.3.2",
