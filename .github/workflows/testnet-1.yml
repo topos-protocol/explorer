@@ -1,17 +1,13 @@
-name: Deploy
+name: testnet-1
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
+
 jobs:
-  devnet-1:
-    name: Deploy to devnet-1
+  testnet-1:
+    name: Deploy to testnet-1
     runs-on: ubuntu-latest
-    environment: devnet-1
+    environment: testnet-1
     steps:
       - name: Checkout
         uses: actions/checkout@v3
