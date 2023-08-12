@@ -1,4 +1,4 @@
-FROM node:lts-alpine as build
+FROM node:lts-alpine
 
 ARG VITE_SUBNET_REGISTRATOR_CONTRACT_ADDRESS
 ARG VITE_TOPOS_CORE_CONTRACT_ADDRESS
@@ -13,12 +13,4 @@ COPY . ./
 
 RUN npm run build
 
-FROM nginx:alpine AS prod
-
-WORKDIR /usr/share/nginx/html
-
-COPY --from=build /usr/src/app/dist .
-
-EXPOSE 80
-
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+CMD npm run preview -- --port 80 --host 0.0.0.0
