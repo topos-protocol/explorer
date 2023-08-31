@@ -15,7 +15,7 @@ root.render(
           colorBgHeader: 'transparent',
         },
         Menu: {
-          itemBg: 'transparent',
+          darkItemBg: 'transparent',
         },
       },
     }}

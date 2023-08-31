@@ -17,6 +17,8 @@ import { SubnetWithId } from './types'
 import useRegisteredSubnets from './hooks/useRegisteredSubnets'
 import { getToposSubnetFromEndpoint } from './components/ToposSubnetSelector'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
+import { BlocksContext } from './contexts/blocks'
+import useSubnetSubscribeToBlocks from './hooks/useSubnetSubscribeToBlocks'
 
 const Errors = styled.div`
   margin: 1rem auto;
@@ -36,6 +38,7 @@ const App = () => {
     React.useState<SubnetWithId>()
   const [selectedTCEEndpoint, setSelectedTCEEndpoint] = React.useState<string>()
   const [subnets, setSubnets] = React.useState<SubnetWithId[]>()
+  const { blocks } = useSubnetSubscribeToBlocks(selectedSubnet)
   const [errors, setErrors] = React.useState<string[]>([])
   const { registeredSubnets } = useRegisteredSubnets(selectedToposSubnet)
 
@@ -103,24 +106,26 @@ const App = () => {
               }}
             >
               <SubnetsContext.Provider value={{ data: subnets }}>
-                <Layout>
-                  <Header />
-                  {Boolean(errors.length) && (
-                    <Errors>
-                      {errors.map((e) => (
-                        <Alert
-                          type="error"
-                          showIcon
-                          closable
-                          message={e}
-                          key={e}
-                        />
-                      ))}
-                    </Errors>
-                  )}
-                  <Content />
-                  <Footer />
-                </Layout>
+                <BlocksContext.Provider value={blocks}>
+                  <Layout>
+                    <Header />
+                    {Boolean(errors.length) && (
+                      <Errors>
+                        {errors.map((e) => (
+                          <Alert
+                            type="error"
+                            showIcon
+                            closable
+                            message={e}
+                            key={e}
+                          />
+                        ))}
+                      </Errors>
+                    )}
+                    <Content />
+                    <Footer />
+                  </Layout>
+                </BlocksContext.Provider>
               </SubnetsContext.Provider>
             </SelectedNetworksContext.Provider>
           </ErrorsContext.Provider>

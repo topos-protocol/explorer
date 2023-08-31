@@ -1,7 +1,7 @@
 import ForceGraph from 'force-graph'
 import React, { useContext, useRef } from 'react'
 
-import useSubnetsCertificates from '../hooks/useSubnetsCertificates'
+import useSubnetGetCertificates from '../hooks/useSubnetGetCertificates'
 import { SubnetWithId } from '../types'
 import { SubnetsContext } from '../contexts/subnets'
 
@@ -15,7 +15,7 @@ type Link = {
 }
 
 const CrossSubnetMessagesGraph = function () {
-  const { certificates } = useSubnetsCertificates()
+  const { certificates } = useSubnetGetCertificates()
   const { data: subnets } = useContext(SubnetsContext)
   const graphElement = useRef<HTMLDivElement>(null)
 

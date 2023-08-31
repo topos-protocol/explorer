@@ -16,12 +16,12 @@ import {
   Typography,
 } from 'antd'
 
-import useSubnetBlockInfo from '../hooks/useSubnetSubscribeToBlocks'
-import useSubnetsCertificates from '../hooks/useSubnetsCertificates'
+import useSubnetSubscribeToCertificates from '../hooks/useSubnetSubscribeToCertificates'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
 import { Link as _Link, useNavigate } from 'react-router-dom'
 import { SubnetsContext } from '../contexts/subnets'
 import { CaretRightOutlined } from '@ant-design/icons'
+import { BlocksContext } from '../contexts/blocks'
 
 const Link = styled(_Link)`
   animation-duration: 0.5s;
@@ -76,9 +76,17 @@ const PAGE_SIZE = 5
 const SubnetInfo = () => {
   const { selectedSubnet } = useContext(SelectedNetworksContext)
   const { data: subnets } = useContext(SubnetsContext)
-  const { blocks } = useSubnetBlockInfo(selectedSubnet)
-  const { certificates } = useSubnetsCertificates({
-    sourceSubnetIds: selectedSubnet ? [selectedSubnet.id] : undefined,
+  const blocks = useContext(BlocksContext)
+  const { certificates } = useSubnetSubscribeToCertificates({
+    sourceSubnetIds: selectedSubnet
+      ? [
+          {
+            id: selectedSubnet.id,
+            position: blocks[0] ? blocks[0].number : undefined,
+          },
+        ]
+      : undefined,
+    limit: 1,
   })
   const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate()
@@ -115,14 +123,16 @@ const SubnetInfo = () => {
             <Statistic title="Latest block" value={blocks[0]?.number} />
           </Card>
         </Col>
-        <Col span={8}>
-          <Card>
-            {/* <Statistic
-              title="Latest certificate"
-              value={latestCertificate?.position}
-            /> */}
-          </Card>
-        </Col>
+        {Boolean(certificates && certificates.length) && (
+          <Col span={8}>
+            <Card>
+              <Statistic
+                title="Latest certificate"
+                value={certificates![0].position}
+              />
+            </Card>
+          </Col>
+        )}
       </Row>
       <Row gutter={32}>
         <Col md={24} lg={12}>
@@ -156,7 +166,9 @@ const SubnetInfo = () => {
                     </Space>,
                     <Space key="list-vertical-date">
                       <Text>
-                        {new Date(block.timestamp * 1_000).toLocaleString()}
+                        {new Date(
+                          (block.timestamp as number) * 1_000
+                        ).toLocaleString()}
                       </Text>
                     </Space>,
                   ]}
@@ -197,38 +209,42 @@ const SubnetInfo = () => {
               },
               pageSize: PAGE_SIZE,
             }}
-            rowKey="prevId"
+            rowKey="id"
             renderItem={(certificate, index) => (
-              <Link to={`/certificates/${certificate.stateRoot}`}>
-                <Item>
+              <Link to={`/certificates/${certificate.id}`}>
+                <Item
+                  actions={[
+                    <Space key="list-vertical-tx">
+                      <Text>Target subnets:</Text>
+                      {Boolean(certificate.targetSubnets.length) ? (
+                        <Space>
+                          <CaretRightOutlined />
+                          {certificate.targetSubnets.map((subnetId) => (
+                            <SubnetNameAndLogo
+                              key={subnetId.value}
+                              subnet={subnets?.find(
+                                (s) => s.id === subnetId.value
+                              )}
+                            />
+                          ))}
+                        </Space>
+                      ) : (
+                        <Tag>None</Tag>
+                      )}
+                    </Space>,
+                    ,
+                  ]}
+                >
                   <List.Item.Meta
                     title={
                       <Space>
-                        <Text>{certificate.id}</Text>
+                        <Text>{certificate.position}</Text>
                         {currentPage === 1 && index === 0 ? (
                           <Tag color="gold">Latest</Tag>
                         ) : null}
                       </Space>
                     }
-                    description={
-                      <Space>
-                        <Text>Target subnets:</Text>
-                        {Boolean(certificate.targetSubnets.length) ? (
-                          <Space>
-                            <CaretRightOutlined />
-                            {certificate.targetSubnets.map((subnetId) => (
-                              <SubnetNameAndLogo
-                                subnet={subnets?.find(
-                                  (s) => s.id === subnetId.value
-                                )}
-                              />
-                            ))}
-                          </Space>
-                        ) : (
-                          <Tag>None</Tag>
-                        )}
-                      </Space>
-                    }
+                    description={certificate.id}
                   />
                 </Item>
               </Link>

@@ -42,7 +42,9 @@ const ToposSubnetSelector = () => {
   const { selectedToposSubnet, setSelectedToposSubnet } = useContext(
     SelectedNetworksContext
   )
-  const [mainnetItems] = useState(['rpc.topos-subnet.zkfoundation.io'])
+  const [testnetItems] = useState([
+    'rpc.topos-subnet.testnet-1.topos.technology',
+  ])
   const [items, setItems] = useState(['localhost:10002'])
   const [name, setName] = useState('')
   const inputRef = useRef<InputRef>(null)
@@ -107,9 +109,9 @@ const ToposSubnetSelector = () => {
           )}
           options={[
             {
-              label: 'Mainnet',
-              options: mainnetItems
-                ? mainnetItems.map((item) => ({
+              label: 'Testnet',
+              options: testnetItems
+                ? testnetItems.map((item) => ({
                     label: (
                       <Space>
                         <Text>{item}</Text>

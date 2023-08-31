@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers'
+import { Certificate as CertificateFromQuery } from './__generated__/graphql'
 
 export interface Subnet {
   endpoint: string
@@ -18,4 +19,6 @@ export interface FetchData<T> {
   loading?: boolean
 }
 
-export interface Certificate {}
+export interface Certificate extends CertificateFromQuery {
+  position?: number
+}
