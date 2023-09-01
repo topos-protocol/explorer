@@ -23,11 +23,11 @@ const Routes = () => (
       <Route index path="/" element={<Home />} />
       <Route path="/subnet" element={<Subnet />} />
       <Route
-        path="/subnet/block/:blockHashOrNumber"
+        path="/subnet/:subnetId/block/:blockHashOrNumber"
         element={<SubnetBlock />}
       />
       <Route
-        path="/subnet/transaction/:transactionHash"
+        path="/subnet/:subnetId/transaction/:transactionHash"
         element={<SubnetTransaction />}
       />
       <Route path="/certificates" element={<Certificates />} />

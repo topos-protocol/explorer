@@ -1,42 +1,15 @@
-import { PlusOutlined } from '@ant-design/icons'
-import { Divider, Input, Select, Space, Button, Form } from 'antd'
-import type { InputRef } from 'antd'
-import React, { useContext, useState, useRef, useCallback } from 'react'
+import { useContext, useCallback } from 'react'
 
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import { SubnetsContext } from '../contexts/subnets'
+import NetworkSelector from './NetworkSelector'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
 
-let index = 0
-
-interface Props {
-  disabled?: boolean
-}
-
-const SubnetSelector = ({ disabled = false }: Props) => {
-  const { data: subnets } = useContext(SubnetsContext)
+const SubnetSelector = () => {
   const { selectedSubnet, setSelectedSubnet } = useContext(
     SelectedNetworksContext
   )
-  const [items, setItems] = useState(['http://localhost:8545'])
-  const [name, setName] = useState('')
-  const inputRef = useRef<InputRef>(null)
-  const [form] = Form.useForm()
-
-  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value)
-  }
-
-  const addItem = (
-    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
-  ) => {
-    e.preventDefault()
-    setItems([...items, name || `New item ${index++}`])
-    setName('')
-    setTimeout(() => {
-      inputRef.current?.focus()
-    }, 0)
-  }
+  const { data: subnets } = useContext(SubnetsContext)
 
   const onValueChange = useCallback(
     async (subnetId: string) => {
@@ -53,49 +26,18 @@ const SubnetSelector = ({ disabled = false }: Props) => {
   )
 
   return (
-    <Form layout="vertical" form={form}>
-      <Form.Item name="subnetId" label="Subnet">
-        <Select
-          style={{ width: 300 }}
-          placeholder="Select a subnet"
-          defaultValue={selectedSubnet?.id}
-          disabled={disabled}
-          onChange={onValueChange}
-          dropdownRender={(menu) => (
-            <>
-              {menu}
-              <Divider style={{ margin: '8px 0' }} />
-              <Space style={{ padding: '0 8px 4px' }}>
-                <Input
-                  placeholder="Please enter item"
-                  ref={inputRef}
-                  value={name}
-                  onChange={onNameChange}
-                />
-                <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-                  Add item
-                </Button>
-              </Space>
-            </>
-          )}
-          options={[
-            {
-              label: 'Remote Subnets',
-              options: subnets
-                ? subnets.map((s) => ({
-                    label: <SubnetNameAndLogo subnet={s} />,
-                    value: s.id,
-                  }))
-                : [],
-            },
-            {
-              label: 'Custom',
-              options: items?.map((item) => ({ label: item, value: item })),
-            },
-          ]}
-        />
-      </Form.Item>
-    </Form>
+    <NetworkSelector
+      allowCustomItems={false}
+      initialValue={selectedSubnet?.id}
+      fixedItems={subnets?.map((s) => ({
+        label: <SubnetNameAndLogo subnet={s} />,
+        value: s.id,
+      }))}
+      fixedItemsLabel="Registered subnets"
+      onValueChange={onValueChange}
+      selectPlaceholder="Select subnet"
+      title="Subnet"
+    />
   )
 }
 

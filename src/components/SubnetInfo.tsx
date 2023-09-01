@@ -39,9 +39,10 @@ const Link = styled(_Link)`
 `
 
 const Item = styled(List.Item)`
-  padding-left: 0.5rem !important;
+  align-items: stretch !important;
   border-radius: 8px;
   transition: background-color 0.2s ease;
+  padding-left: 0.5rem !important;
   animation-duration: 0.5s;
   animation-name: animate-slide;
   animation-fill-mode: backwards;
@@ -154,10 +155,11 @@ const SubnetInfo = () => {
                 setCurrentPage(page)
               },
               pageSize: PAGE_SIZE,
+              showSizeChanger: false,
             }}
             rowKey="hash"
             renderItem={(block, index) => (
-              <Link to={`/subnet/block/${block.hash}`}>
+              <Link to={`/subnet/${selectedSubnet?.id}/block/${block.hash}`}>
                 <Item
                   actions={[
                     <Space key="list-vertical-tx">

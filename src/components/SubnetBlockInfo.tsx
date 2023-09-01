@@ -47,7 +47,6 @@ interface Props {
 
 const SubnetBlockInfo = ({ blockWithTransactions }: Props) => {
   const { selectedSubnet } = useContext(SelectedNetworksContext)
-  console.log(blockWithTransactions)
 
   return (
     <Space direction="vertical">

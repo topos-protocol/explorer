@@ -17,6 +17,7 @@ import { SubnetsContext } from '../contexts/subnets'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
 import { CaretRightOutlined } from '@ant-design/icons'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
+import { BlocksContext } from '../contexts/blocks'
 
 const Link = styled(_Link)`
   animation-duration: 0.5s;
@@ -70,6 +71,7 @@ const PAGE_SIZE = 8
 
 const CertificatesList = () => {
   const { data: subnets } = useContext(SubnetsContext)
+  const blocks = useContext(BlocksContext)
   const { selectedSubnet } = useContext(SelectedNetworksContext)
   const [currentPage, setCurrentPage] = useState(1)
   const { certificates } = useSubnetGetCertificates({
@@ -90,7 +92,7 @@ const CertificatesList = () => {
       </Divider>
       <Descriptions>
         <Descriptions.Item label="Name">
-          <div>Test</div>
+          <SubnetNameAndLogo subnet={selectedSubnet} />
         </Descriptions.Item>
       </Descriptions>
       <Search
@@ -108,7 +110,8 @@ const CertificatesList = () => {
             setCurrentPage(page)
           },
           pageSize: PAGE_SIZE,
-          total: 999,
+          showSizeChanger: false,
+          total: blocks[0]?.number,
         }}
         rowKey="id"
         renderItem={(certificate) => (

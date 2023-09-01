@@ -1,12 +1,24 @@
 import { Alert } from 'antd'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 
 import RouteContainer from '../components/RouteContainer'
 import CertificateGraph from '../components/CrossSubnetMessagesGraph'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
+import { RouteParamsFirstContext } from '../contexts/routeParamsFirst'
 
 const CrossSubnetMessages = () => {
   const { selectedTCEEndpoint } = useContext(SelectedNetworksContext)
+  const { setRouteParamsProcessing } = useContext(RouteParamsFirstContext)
+
+  useEffect(
+    function setPageReady() {
+      if (setRouteParamsProcessing) {
+        setRouteParamsProcessing({ isReady: true })
+      }
+    },
+    [setRouteParamsProcessing]
+  )
+
   return (
     <RouteContainer breadcrumbItems={[{ title: 'Cross-Subnet Messages' }]}>
       {Boolean(selectedTCEEndpoint) ? (

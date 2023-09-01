@@ -18,7 +18,7 @@ interface ShowModals {
   toposSubnet?: boolean
 }
 
-const EndpointsMenu = () => {
+const NetworksMenu = () => {
   const toposSubnetButtonRef = useRef<any>()
   const theme = useTheme()
   const { selectedSubnet, selectedTCEEndpoint, selectedToposSubnet } =
@@ -76,9 +76,12 @@ const EndpointsMenu = () => {
               {Boolean(selectedSubnet) && (
                 <Text strong>{`(currently: ${selectedSubnet?.name})`}</Text>
               )}
+              {Boolean(!selectedToposSubnet) && (
+                <Text strong>Select a Topos Subnet endpoint first!</Text>
+              )}
             </Space>
           }
-          onClick={() => toggleModal('subnet')}
+          onClick={() => (selectedToposSubnet ? toggleModal('subnet') : null)}
         />
         <FloatButton
           icon={
@@ -139,4 +142,4 @@ const EndpointsMenu = () => {
   )
 }
 
-export default EndpointsMenu
+export default NetworksMenu
