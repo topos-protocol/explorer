@@ -9,6 +9,7 @@ import Subnet from '../routes/Subnet'
 import Certificates from '../routes/Certificates'
 import CrossSubnetMessages from '../routes/CrossSubnetMessages'
 import SubnetTransaction from '../routes/SubnetTransaction'
+import SubnetCertificate from '../routes/SubnetCertificate'
 
 const { Content: AntdContent } = Layout
 
@@ -31,6 +32,10 @@ const Routes = () => (
         element={<SubnetTransaction />}
       />
       <Route path="/certificates" element={<Certificates />} />
+      <Route
+        path="/subnet/:subnetId/certificate/:certificatePositionOrId"
+        element={<SubnetCertificate />}
+      />
       <Route path="/cross-subnet-messages" element={<CrossSubnetMessages />} />
       <Route path="*" element={<_404 />} />
     </RouterRoutes>

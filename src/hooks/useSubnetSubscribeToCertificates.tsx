@@ -74,26 +74,6 @@ export default function useSubnetSubscribeToCertificates({
     [sourceSubnetIds]
   )
 
-  console.log(currentIndexes)
-  // console.log(storedPositions)
-
-  console.log({
-    fromSourceCheckpoint: {
-      sourceSubnetIds: Array.from(storedPositions).map(([id]) => ({
-        value: id,
-      })),
-      positions: Array.from(storedPositions).map(([id, position]) => {
-        return {
-          sourceSubnetId: { value: id },
-          position: position
-            ? (currentIndexesRef.current?.get(id) || 0) + position
-            : Infinity,
-        }
-      }),
-    },
-    limit: definedLimit,
-  })
-
   const { data, error, loading } = useQuery(GET_CERTIFICATES, {
     variables: {
       fromSourceCheckpoint: {
@@ -114,12 +94,10 @@ export default function useSubnetSubscribeToCertificates({
     pollInterval: 2000,
   })
 
-  console.log(data?.certificates)
-
   useEffect(
     function appendCertificate() {
       const latestCurrentIndexes = currentIndexesRef.current
-      console.log(latestCurrentIndexes)
+
       if (
         data?.certificates &&
         data?.certificates.length &&
@@ -146,7 +124,6 @@ export default function useSubnetSubscribeToCertificates({
           }
         })
 
-        console.log(newCurrentIndexes)
         setCurrentIndexes(newCurrentIndexes)
         setCertificates((c) => [...newCertificates, ...c])
       }

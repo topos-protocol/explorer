@@ -77,7 +77,9 @@ const CertificatesList = () => {
   const { certificates } = useSubnetGetCertificates({
     limit: PAGE_SIZE,
     skip: PAGE_SIZE * (currentPage - 1),
-    sourceSubnetId: selectedSubnet?.id,
+    sourceStreamPosition: {
+      sourceSubnetId: { value: selectedSubnet?.id || '' },
+    },
   })
   const navigate = useNavigate()
 
@@ -115,7 +117,9 @@ const CertificatesList = () => {
         }}
         rowKey="id"
         renderItem={(certificate) => (
-          <Link to={`/certificates/${certificate.id}`}>
+          <Link
+            to={`/subnet/${selectedSubnet?.id}/certificate/${certificate.position}`}
+          >
             <Item
               actions={[
                 <Space key="list-vertical-tx">

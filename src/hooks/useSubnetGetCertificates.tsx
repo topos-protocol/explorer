@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client'
 import { useMemo } from 'react'
 
 import { graphql } from '../__generated__/gql'
+import { SourceStreamPosition } from '../__generated__/graphql'
 // import { ErrorsContext } from '../contexts/errors'
 
 const DEFAULT_LIMIT = 10
@@ -28,30 +29,38 @@ const GET_CERTIFICATES = graphql(`
 interface Options {
   limit?: number
   skip?: number
-  sourceSubnetId?: string
+  sourceStreamPosition?: Partial<SourceStreamPosition>
 }
 
 export default function useSubnetGetCertificates({
   limit,
   skip,
-  sourceSubnetId,
+  sourceStreamPosition,
 }: Options = {}) {
   // const { setErrors } = React.useContext(ErrorsContext)
   const definedLimit = useMemo(() => limit || DEFAULT_LIMIT, [limit])
   const definedSkip = useMemo(() => skip || DEFAULT_SKIP, [skip])
 
+  console.log(sourceStreamPosition)
+
   const { data, error, loading } = useQuery(GET_CERTIFICATES, {
     variables: {
       fromSourceCheckpoint: {
-        sourceSubnetIds: sourceSubnetId ? [{ value: sourceSubnetId }] : [],
-        positions: sourceSubnetId
-          ? [
-              {
-                sourceSubnetId: { value: sourceSubnetId },
-                position: definedSkip ? definedSkip + 1 : 0,
-              },
-            ]
-          : [],
+        sourceSubnetIds:
+          sourceStreamPosition && sourceStreamPosition.sourceSubnetId
+            ? [sourceStreamPosition.sourceSubnetId]
+            : [],
+        positions:
+          sourceStreamPosition && sourceStreamPosition.sourceSubnetId
+            ? [
+                {
+                  sourceSubnetId: sourceStreamPosition.sourceSubnetId,
+                  position: sourceStreamPosition.position
+                    ? sourceStreamPosition.position
+                    : definedSkip,
+                },
+              ]
+            : [],
       },
       limit: definedLimit,
     },
@@ -61,7 +70,7 @@ export default function useSubnetGetCertificates({
     () =>
       data?.certificates.map((certificate, index) => ({
         ...certificate,
-        position: definedSkip + index,
+        position: sourceStreamPosition?.position || definedSkip + index,
       })),
     [data]
   )

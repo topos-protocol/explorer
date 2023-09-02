@@ -213,7 +213,9 @@ const SubnetInfo = () => {
             }}
             rowKey="id"
             renderItem={(certificate, index) => (
-              <Link to={`/certificates/${certificate.id}`}>
+              <Link
+                to={`/subnet/${selectedSubnet?.id}/certificate/${certificate.position}`}
+              >
                 <Item
                   actions={[
                     <Space key="list-vertical-tx">
