@@ -18,6 +18,7 @@ import Link from './Link'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
 import { CaretRightOutlined } from '@ant-design/icons'
+import AddressInfo from './AddressInfo'
 
 const { Text } = Typography
 
@@ -64,7 +65,9 @@ const SubnetBlockInfo = ({ blockWithTransactions }: Props) => {
           <SubnetNameAndLogo subnet={selectedSubnet} />
         </Descriptions.Item>
         <Descriptions.Item label="Parent" span={2}>
-          <Link to={`/subnet/block/${blockWithTransactions?.parentHash}`}>
+          <Link
+            to={`/subnet/${selectedSubnet?.id}/block/${blockWithTransactions?.parentHash}`}
+          >
             {blockWithTransactions?.parentHash}
           </Link>
         </Descriptions.Item>
@@ -102,7 +105,9 @@ const SubnetBlockInfo = ({ blockWithTransactions }: Props) => {
         }}
         rowKey="hash"
         renderItem={(transaction, index) => (
-          <Link to={`/subnet/transaction/${transaction.hash}`}>
+          <Link
+            to={`/subnet/${selectedSubnet?.id}/transaction/${transaction.hash}`}
+          >
             <Item
               actions={[
                 <Space key="list-vertical-date">
@@ -122,9 +127,9 @@ const SubnetBlockInfo = ({ blockWithTransactions }: Props) => {
                 }
                 description={
                   <Space>
-                    <Text>{transaction.from}</Text>
+                    <AddressInfo address={transaction.from} />
                     <CaretRightOutlined />
-                    <Text>{transaction.to}</Text>
+                    <AddressInfo address={transaction.to} />
                   </Space>
                 }
               />

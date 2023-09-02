@@ -82,8 +82,8 @@ const SubnetInfo = () => {
     sourceSubnetIds: selectedSubnet
       ? [
           {
-            id: selectedSubnet.id,
-            position: blocks[0] ? blocks[0].number : undefined,
+            position: blocks[0]?.number,
+            sourceSubnetId: { value: selectedSubnet.id },
           },
         ]
       : undefined,

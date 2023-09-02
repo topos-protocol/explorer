@@ -115,7 +115,7 @@ const CertificatesList = () => {
         }}
         rowKey="id"
         renderItem={(certificate) => (
-          <Link to={`/certificates/${certificate.stateRoot}`}>
+          <Link to={`/certificates/${certificate.id}`}>
             <Item
               actions={[
                 <Space key="list-vertical-tx">

@@ -21,6 +21,8 @@ export default function useSubnetSubscribeToBlocks(subnet?: Subnet) {
 
   useEffect(
     function subscribeToBlock() {
+      setBlocks([])
+
       const listener = (blockNumber: number) => {
         appendBlock(blockNumber)
       }

@@ -1,9 +1,10 @@
 import { useQuery } from '@apollo/client'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { graphql } from '../__generated__/gql'
 // import { ErrorsContext } from '../contexts/errors'
 import { Certificate } from '../types'
+import { SourceStreamPosition } from '../__generated__/graphql'
 
 const DEFAULT_LIMIT = 10
 
@@ -27,7 +28,7 @@ const GET_CERTIFICATES = graphql(`
 
 interface Options {
   limit?: number
-  sourceSubnetIds?: { position?: number; id: string }[]
+  sourceSubnetIds?: Array<SourceStreamPosition>
 }
 
 export default function useSubnetSubscribeToCertificates({
@@ -36,25 +37,62 @@ export default function useSubnetSubscribeToCertificates({
 }: Options) {
   // const { setErrors } = React.useContext(ErrorsContext)
   const [certificates, setCertificates] = useState<Certificate[]>([])
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const definedLimit = useMemo(() => limit || DEFAULT_LIMIT, [])
-
+  const [currentIndexes, setCurrentIndexes] = useState(
+    new Map<string, number>()
+  )
+  const currentIndexesRef = useRef<Map<string, number> | null>(null)
   const [storedPositions, setStoredPositions] = useState(
     new Map<string, number>()
   )
+  const definedLimit = useMemo(() => limit || DEFAULT_LIMIT, [limit])
 
   useEffect(
-    function onSourceSubnetIdsUpdate() {
-      sourceSubnetIds?.forEach(({ id, position }) => {
-        if (storedPositions.get(id) === undefined && position !== undefined) {
-          const newMap = storedPositions
-          newMap.set(id, position)
-          setStoredPositions(newMap)
+    function storeLatestCurrentIndexes() {
+      currentIndexesRef.current = currentIndexes
+    },
+    [currentIndexes]
+  )
+
+  useEffect(
+    function onNewSourceSubnetIds() {
+      const newStoredPositions = storedPositions
+      const newCurrentIndexes = currentIndexes
+
+      sourceSubnetIds?.forEach(({ position, sourceSubnetId }) => {
+        if (
+          storedPositions.get(sourceSubnetId.value) === undefined &&
+          position !== undefined
+        ) {
+          newStoredPositions.set(sourceSubnetId.value, position)
+          newCurrentIndexes.set(sourceSubnetId.value, 0)
         }
       })
+
+      setStoredPositions(newStoredPositions)
+      setCurrentIndexes(newCurrentIndexes)
     },
     [sourceSubnetIds]
   )
+
+  console.log(currentIndexes)
+  // console.log(storedPositions)
+
+  console.log({
+    fromSourceCheckpoint: {
+      sourceSubnetIds: Array.from(storedPositions).map(([id]) => ({
+        value: id,
+      })),
+      positions: Array.from(storedPositions).map(([id, position]) => {
+        return {
+          sourceSubnetId: { value: id },
+          position: position
+            ? (currentIndexesRef.current?.get(id) || 0) + position
+            : Infinity,
+        }
+      }),
+    },
+    limit: definedLimit,
+  })
 
   const { data, error, loading } = useQuery(GET_CERTIFICATES, {
     variables: {
@@ -66,7 +104,7 @@ export default function useSubnetSubscribeToCertificates({
           return {
             sourceSubnetId: { value: id },
             position: position
-              ? currentIndex + position * definedLimit
+              ? (currentIndexesRef.current?.get(id) || 0) + position
               : Infinity,
           }
         }),
@@ -76,23 +114,41 @@ export default function useSubnetSubscribeToCertificates({
     pollInterval: 2000,
   })
 
+  console.log(data?.certificates)
+
   useEffect(
     function appendCertificate() {
-      if (data?.certificates && data.certificates[0]) {
-        setCurrentIndex((i) => i + 1)
-        setCertificates((c) => {
-          const certificate = data?.certificates[0]
-          const sourcePosition = storedPositions.get(certificate.sourceSubnetId)
-          return [
-            {
+      const latestCurrentIndexes = currentIndexesRef.current
+      console.log(latestCurrentIndexes)
+      if (
+        data?.certificates &&
+        data?.certificates.length &&
+        latestCurrentIndexes
+      ) {
+        const newCurrentIndexes = latestCurrentIndexes
+        const newCertificates: Certificate[] = []
+
+        data.certificates.forEach((certificate) => {
+          const currentIndex = newCurrentIndexes.get(certificate.sourceSubnetId)
+
+          if (currentIndex !== undefined) {
+            newCurrentIndexes.set(certificate.sourceSubnetId, currentIndex + 1)
+
+            const sourcePosition = storedPositions.get(
+              certificate.sourceSubnetId
+            )
+            newCertificates.push({
               ...certificate,
               position: sourcePosition
                 ? sourcePosition + currentIndex
                 : undefined,
-            },
-            ...c,
-          ]
+            })
+          }
         })
+
+        console.log(newCurrentIndexes)
+        setCurrentIndexes(newCurrentIndexes)
+        setCertificates((c) => [...newCertificates, ...c])
       }
     },
     [data?.certificates]

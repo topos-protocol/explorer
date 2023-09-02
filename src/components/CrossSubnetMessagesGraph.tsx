@@ -1,9 +1,11 @@
 import ForceGraph from 'force-graph'
-import React, { useContext, useRef } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
-import useSubnetGetCertificates from '../hooks/useSubnetGetCertificates'
 import { SubnetWithId } from '../types'
 import { SubnetsContext } from '../contexts/subnets'
+import useSubnetGetLatestBlockNumber from '../hooks/useSubnetGetLatestBlockNumber'
+import useSubnetSubscribeToCertificates from '../hooks/useSubnetSubscribeToCertificates'
+import { SourceStreamPosition } from '../__generated__/graphql'
 
 type Link = {
   certificateId: string
@@ -15,13 +17,68 @@ type Link = {
 }
 
 const CrossSubnetMessagesGraph = function () {
-  const { certificates } = useSubnetGetCertificates()
   const { data: subnets } = useContext(SubnetsContext)
+  const { getSubnetLatestBlockNumber } = useSubnetGetLatestBlockNumber()
+  const [subnetsLatestBlockNumbers, setSubnetsLatestBlockNumbers] =
+    useState<Map<string, number>>()
+  const { certificates } = useSubnetSubscribeToCertificates(
+    subnets && subnetsLatestBlockNumbers
+      ? {
+          limit: 2,
+          sourceSubnetIds: subnets?.reduce(
+            (acc: Array<SourceStreamPosition> | undefined, subnet) => {
+              const latestBlockNumber = subnetsLatestBlockNumbers.get(subnet.id)
+
+              if (latestBlockNumber !== undefined && acc === undefined) {
+                acc = []
+              }
+
+              if (latestBlockNumber !== undefined) {
+                acc!.push({
+                  position: latestBlockNumber,
+                  sourceSubnetId: { value: subnet.id },
+                })
+              }
+
+              return acc
+            },
+            undefined
+          ),
+        }
+      : {}
+  )
   const graphElement = useRef<HTMLDivElement>(null)
 
-  console.log(certificates)
+  const certificatesWithTarget = useMemo(
+    () => certificates.filter((c) => c.targetSubnets.length),
+    [certificates]
+  )
 
-  React.useEffect(
+  useEffect(() => {
+    async function getSubnetsLatestBlockNumbers() {
+      if (subnets) {
+        const newSubnetsLatestBlockNumbers = new Map<string, number>()
+        await Promise.all(
+          subnets.map(async (subnet) => {
+            const latestBlockNumber = await getSubnetLatestBlockNumber(subnet)
+
+            if (latestBlockNumber !== undefined) {
+              newSubnetsLatestBlockNumbers.set(subnet.id, latestBlockNumber)
+            }
+          })
+        )
+
+        setSubnetsLatestBlockNumbers(newSubnetsLatestBlockNumbers)
+      }
+    }
+
+    getSubnetsLatestBlockNumbers()
+  }, [subnets])
+
+  console.log(certificates)
+  console.log(certificatesWithTarget)
+
+  useEffect(
     function renderCertificates() {
       if (subnets) {
         let sameNodesLinks: Record<string, Link[]> = {}
@@ -33,12 +90,12 @@ const CrossSubnetMessagesGraph = function () {
             img.src = subnet.logoURL
             return { ...subnet, img }
           }),
-          links: (certificates || []).reduce((acc: Link[], curr) => {
+          links: (certificatesWithTarget || []).reduce((acc: Link[], curr) => {
             curr.targetSubnets.forEach((t) => {
               acc.push({
                 source: curr.sourceSubnetId,
                 target: t.value.toString(),
-                certificateId: curr.txRootHash, //TODO: Find a wa to get certId
+                certificateId: curr.id,
                 weight: 1,
               })
             })
@@ -135,7 +192,7 @@ const CrossSubnetMessagesGraph = function () {
         myGraph.onEngineStop(() => myGraph.zoomToFit(400, 200))
       }
     },
-    [certificates, subnets]
+    [JSON.stringify(certificatesWithTarget), subnets]
   )
   return <div ref={graphElement} />
 }
