@@ -52,7 +52,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           build-args: |
             VITE_SUBNET_REGISTRATOR_CONTRACT_ADDRESS=${{ vars.VITE_SUBNET_REGISTRATOR_CONTRACT_ADDRESS }}
-            VITE_TOPOS_CORE_CONTRACT_ADDRESS=${{ vars.VITE_TOPOS_CORE_CONTRACT_ADDRESS }}
+            VITE_TOPOS_CORE_PROXY_CONTRACT_ADDRESS=${{ vars.VITE_TOPOS_CORE_PROXY_CONTRACT_ADDRESS }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: |

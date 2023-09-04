@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import React, { useCallback, useEffect } from 'react'
-import { ErrorsContext } from '../contexts/errors'
 
+import { ErrorsContext } from '../contexts/errors'
 import { Subnet } from '../types'
 import useEthers from './useEthers'
 
@@ -21,6 +21,8 @@ export default function useSubnetSubscribeToBlocks(subnet?: Subnet) {
 
   useEffect(
     function subscribeToBlock() {
+      setBlocks([])
+
       const listener = (blockNumber: number) => {
         appendBlock(blockNumber)
       }

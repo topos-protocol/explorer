@@ -1,5 +1,5 @@
 import { BlockWithTransactions } from '@ethersproject/abstract-provider'
-import React, { useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ErrorsContext } from '../contexts/errors'
 
 import { Subnet } from '../types'
@@ -9,9 +9,9 @@ export default function useSubnetGetBlock(
   subnet?: Subnet,
   blockHashOrNumber?: string
 ) {
-  const { setErrors } = React.useContext(ErrorsContext)
+  const { setErrors } = useContext(ErrorsContext)
   const { provider } = useEthers({ subnet })
-  const [block, setBlock] = React.useState<BlockWithTransactions>()
+  const [block, setBlock] = useState<BlockWithTransactions>()
 
   useEffect(
     function getBlock() {

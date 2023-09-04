@@ -12,10 +12,12 @@ import {
 } from 'antd'
 
 import { Link as _Link, useNavigate } from 'react-router-dom'
-import useSubnetsCertificates from '../hooks/useSubnetsCertificates'
+import useSubnetGetCertificates from '../hooks/useSubnetGetCertificates'
 import { SubnetsContext } from '../contexts/subnets'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
 import { CaretRightOutlined } from '@ant-design/icons'
+import { SelectedNetworksContext } from '../contexts/selectedNetworks'
+import { BlocksContext } from '../contexts/blocks'
 
 const Link = styled(_Link)`
   animation-duration: 0.5s;
@@ -65,15 +67,21 @@ const Item = styled(List.Item)`
 const { Search } = Input
 const { Text } = Typography
 
-const PAGE_SIZE = 5
+const PAGE_SIZE = 8
 
 const CertificatesList = () => {
-  const { certificates } = useSubnetsCertificates()
   const { data: subnets } = useContext(SubnetsContext)
+  const blocks = useContext(BlocksContext)
+  const { selectedSubnet } = useContext(SelectedNetworksContext)
   const [currentPage, setCurrentPage] = useState(1)
+  const { certificates } = useSubnetGetCertificates({
+    limit: PAGE_SIZE,
+    skip: PAGE_SIZE * (currentPage - 1),
+    sourceStreamPosition: {
+      sourceSubnetId: { value: selectedSubnet?.id || '' },
+    },
+  })
   const navigate = useNavigate()
-
-  console.log(certificates)
 
   const handleSearch = useCallback((value: string) => {
     navigate(`/certificates/${value}`)
@@ -86,7 +94,7 @@ const CertificatesList = () => {
       </Divider>
       <Descriptions>
         <Descriptions.Item label="Name">
-          <div>Test</div>
+          <SubnetNameAndLogo subnet={selectedSubnet} />
         </Descriptions.Item>
       </Descriptions>
       <Search
@@ -104,15 +112,31 @@ const CertificatesList = () => {
             setCurrentPage(page)
           },
           pageSize: PAGE_SIZE,
+          showSizeChanger: false,
+          total: blocks[0]?.number,
         }}
-        rowKey="prevId"
-        renderItem={(certificate, index) => (
-          <Link to={`/certificates/${certificate.stateRoot}`}>
+        rowKey="id"
+        renderItem={(certificate) => (
+          <Link
+            to={`/subnet/${selectedSubnet?.id}/certificate/${certificate.position}`}
+          >
             <Item
               actions={[
                 <Space key="list-vertical-tx">
-                  <Text>{certificate.targetSubnets.length}</Text>
-                  <Text>target subnets</Text>
+                  <Text>Target subnets:</Text>
+                  {Boolean(certificate.targetSubnets.length) ? (
+                    <Space>
+                      <CaretRightOutlined />
+                      {certificate.targetSubnets.map((subnetId) => (
+                        <SubnetNameAndLogo
+                          key={subnetId.value}
+                          subnet={subnets?.find((s) => s.id === subnetId.value)}
+                        />
+                      ))}
+                    </Space>
+                  ) : (
+                    <Tag>None</Tag>
+                  )}
                 </Space>,
                 <Space key="list-vertical-date">
                   <Text>Verifier</Text>
@@ -123,33 +147,10 @@ const CertificatesList = () => {
               <List.Item.Meta
                 title={
                   <Space>
-                    <Text>{certificate.id}</Text>
-                    {currentPage === 1 && index === 0 ? (
-                      <Tag color="gold">Latest</Tag>
-                    ) : null}
+                    <Text>{certificate.position}</Text>
                   </Space>
                 }
-                description={
-                  <Space>
-                    <SubnetNameAndLogo
-                      subnet={subnets?.find(
-                        (s) => s.id === certificate.sourceSubnetId
-                      )}
-                    />
-                    {Boolean(certificate.targetSubnets.length) && (
-                      <Space>
-                        <CaretRightOutlined />
-                        {certificate.targetSubnets.map((subnetId) => (
-                          <SubnetNameAndLogo
-                            subnet={subnets?.find(
-                              (s) => s.id === subnetId.value
-                            )}
-                          />
-                        ))}
-                      </Space>
-                    )}
-                  </Space>
-                }
+                description={certificate.id}
               />
             </Item>
           </Link>

@@ -1,17 +1,16 @@
 import { SubnetRegistrator__factory } from '@topos-protocol/topos-smart-contracts/typechain-types'
 import { ethers } from 'ethers'
-import React, { useMemo } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { ErrorsContext } from '../contexts/errors'
 
 import { Subnet, SubnetWithId } from '../types'
 import useEthers from './useEthers'
 
 export default function useRegisteredSubnets(toposSubnet?: SubnetWithId) {
-  const { setErrors } = React.useContext(ErrorsContext)
+  const { setErrors } = useContext(ErrorsContext)
   const { provider } = useEthers({ subnet: toposSubnet })
-  const [loading, setLoading] = React.useState(false)
-  const [registeredSubnets, setRegisteredSubnets] =
-    React.useState<SubnetWithId[]>()
+  const [loading, setLoading] = useState(false)
+  const [registeredSubnets, setRegisteredSubnets] = useState<SubnetWithId[]>()
 
   const contract = useMemo(
     () =>
@@ -24,7 +23,7 @@ export default function useRegisteredSubnets(toposSubnet?: SubnetWithId) {
     [provider]
   )
 
-  React.useEffect(
+  useEffect(
     function init() {
       async function getRegisteredSubnets() {
         setLoading(true)

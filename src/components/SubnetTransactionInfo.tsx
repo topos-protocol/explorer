@@ -1,5 +1,9 @@
 import styled from '@emotion/styled'
 import {
+  TransactionReceipt,
+  TransactionResponse,
+} from '@ethersproject/abstract-provider'
+import {
   Card,
   Col,
   Collapse,
@@ -14,13 +18,10 @@ import {
 import { ethers } from 'ethers'
 import { useContext } from 'react'
 
-import Link from './Link'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
+import AddressInfo from './AddressInfo'
+import Link from './Link'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
-import {
-  TransactionReceipt,
-  TransactionResponse,
-} from '@ethersproject/abstract-provider'
 
 const { Text } = Typography
 
@@ -63,6 +64,7 @@ interface Props {
 
 const SubnetTransactionInfo = ({ receipt, transaction }: Props) => {
   const { selectedSubnet } = useContext(SelectedNetworksContext)
+
   console.log(transaction)
   console.log(receipt)
 
@@ -72,6 +74,12 @@ const SubnetTransactionInfo = ({ receipt, transaction }: Props) => {
         Info
       </Divider>
       <Descriptions>
+        <Descriptions.Item label="From" span={3}>
+          <AddressInfo address={transaction?.from} />
+        </Descriptions.Item>
+        <Descriptions.Item label="To" span={3}>
+          <AddressInfo address={transaction?.to} />
+        </Descriptions.Item>
         <Descriptions.Item label="Value">
           {`${ethers.utils.formatUnits(transaction?.value!)} ${
             selectedSubnet?.currencySymbol
@@ -84,7 +92,9 @@ const SubnetTransactionInfo = ({ receipt, transaction }: Props) => {
           <SubnetNameAndLogo subnet={selectedSubnet} />
         </Descriptions.Item>
         <Descriptions.Item label="Block" span={2}>
-          <Link to={`/subnet/block/${transaction?.blockHash}`}>
+          <Link
+            to={`/subnet/${selectedSubnet?.id}/block/${transaction?.blockHash}`}
+          >
             {transaction?.blockHash}
           </Link>
         </Descriptions.Item>
@@ -142,7 +152,7 @@ const SubnetTransactionInfo = ({ receipt, transaction }: Props) => {
                         children: (
                           <Space direction="vertical">
                             {log.topics.map((t) => (
-                              <Text>{t}</Text>
+                              <Text key={t}>{t}</Text>
                             ))}
                           </Space>
                         ),

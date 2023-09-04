@@ -3,6 +3,6 @@ import { ToposCore } from '@topos-protocol/topos-smart-contracts/typechain-types
 import { ethers } from 'ethers'
 
 export const toposCoreContract = new ethers.Contract(
-  import.meta.env.VITE_TOPOS_CORE_CONTRACT_ADDRESS || '',
+  import.meta.env.VITE_TOPOS_CORE_PROXY_CONTRACT_ADDRESS || '',
   ToposCoreJSON.abi
 ) as ToposCore

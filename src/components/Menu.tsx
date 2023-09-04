@@ -1,9 +1,12 @@
 import { Menu as AntdMenu } from 'antd'
-import { useMemo } from 'react'
+import { MutableRefObject, useContext, useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+
+import { TourRefsContext } from '../contexts/tourRefs'
 
 const Menu = () => {
   const { pathname } = useLocation()
+  const { MenuRef } = useContext(TourRefsContext)
 
   const items = useMemo(
     () => [
@@ -11,11 +14,6 @@ const Menu = () => {
         key: 'subnet',
         label: <NavLink to="/subnet">Subnet</NavLink>,
         rootpath: '/subnet',
-      },
-      {
-        key: 'certificates',
-        label: <NavLink to="/certificates">Certificates</NavLink>,
-        rootpath: '/certificates',
       },
       {
         key: 'cross-subnet-messages',
@@ -37,13 +35,15 @@ const Menu = () => {
   )
 
   return (
-    <AntdMenu
-      theme="dark"
-      disabledOverflow={true}
-      mode="horizontal"
-      items={items}
-      selectedKeys={selectedKeys}
-    />
+    <div ref={MenuRef}>
+      <AntdMenu
+        theme="dark"
+        disabledOverflow={true}
+        mode="horizontal"
+        items={items}
+        selectedKeys={selectedKeys}
+      />
+    </div>
   )
 }
 

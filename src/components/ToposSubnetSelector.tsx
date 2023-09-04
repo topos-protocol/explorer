@@ -1,67 +1,19 @@
-import { PlusOutlined } from '@ant-design/icons'
-import { Divider, Form, Input, Select, Space, Button, Typography } from 'antd'
-import type { InputRef } from 'antd'
-import { ethers, BigNumber } from 'ethers'
-import React, { useContext, useState, useRef, useCallback } from 'react'
+import { useContext, useCallback, useMemo } from 'react'
 
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
-import { toposCoreContract } from '../contracts'
-import { SubnetWithId } from '../types'
-
-const { Text } = Typography
-
-let index = 0
-
-export function getToposSubnetFromEndpoint(endpoint?: string) {
-  return new Promise<SubnetWithId>(async (resolve, reject) => {
-    if (endpoint) {
-      const provider = new ethers.providers.JsonRpcProvider(
-        `http://${endpoint}`
-      )
-      const network = await provider.getNetwork()
-      const chainId = network.chainId
-
-      const contract = toposCoreContract.connect(provider)
-      const subnetId = await contract.networkSubnetId()
-
-      resolve({
-        chainId: BigNumber.from(chainId.toString()),
-        currencySymbol: 'TOPOS',
-        endpoint,
-        id: subnetId,
-        logoURL: '/logo.svg',
-        name: 'Topos Subnet',
-      })
-    }
-
-    reject()
-  })
-}
+import NetworkSelector from './NetworkSelector'
+import useToposSubnetGetFromEndpoint from '../hooks/useToposSubnetGetFromEndpoint'
 
 const ToposSubnetSelector = () => {
   const { selectedToposSubnet, setSelectedToposSubnet } = useContext(
     SelectedNetworksContext
   )
-  const [mainnetItems] = useState(['rpc.topos-subnet.zkfoundation.io'])
-  const [items, setItems] = useState(['localhost:10002'])
-  const [name, setName] = useState('')
-  const inputRef = useRef<InputRef>(null)
-  const [form] = Form.useForm()
-
-  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value)
-  }
-
-  const addItem = (
-    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
-  ) => {
-    e.preventDefault()
-    setItems([...items, name || `New item ${index++}`])
-    setName('')
-    setTimeout(() => {
-      inputRef.current?.focus()
-    }, 0)
-  }
+  const { getToposSubnetFromEndpoint } = useToposSubnetGetFromEndpoint()
+  const testnetItems = useMemo(
+    () => ['rpc.topos-subnet.testnet-1.topos.technology'],
+    []
+  )
+  const defaultCustomItems = useMemo(() => ['localhost:10002'], [])
 
   const onValueChange = useCallback(
     async (endpoint: string) => {
@@ -81,52 +33,24 @@ const ToposSubnetSelector = () => {
   )
 
   return (
-    <Form layout="vertical" form={form}>
-      <Form.Item name="toposSubnetEndpoint" label="Topos Subnet endpoint">
-        <Select
-          style={{ width: 300 }}
-          placeholder="Select a Topos Subnet endpoint"
-          onChange={onValueChange}
-          defaultValue={selectedToposSubnet?.endpoint}
-          dropdownRender={(menu) => (
-            <>
-              {menu}
-              <Divider style={{ margin: '8px 0' }} />
-              <Space style={{ padding: '0 8px 4px' }}>
-                <Input
-                  placeholder="Please enter item"
-                  ref={inputRef}
-                  value={name}
-                  onChange={onNameChange}
-                />
-                <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-                  Add item
-                </Button>
-              </Space>
-            </>
-          )}
-          options={[
-            {
-              label: 'Mainnet',
-              options: mainnetItems
-                ? mainnetItems.map((item) => ({
-                    label: (
-                      <Space>
-                        <Text>{item}</Text>
-                      </Space>
-                    ),
-                    value: item,
-                  }))
-                : [],
-            },
-            {
-              label: 'Custom',
-              options: items?.map((item) => ({ label: item, value: item })),
-            },
-          ]}
-        />
-      </Form.Item>
-    </Form>
+    <NetworkSelector
+      allowCustomItems
+      customItemsLabel="Dev"
+      defaultCustomItems={defaultCustomItems.map((i) => ({
+        label: i,
+        value: i,
+      }))}
+      initialValue={selectedToposSubnet?.endpoint}
+      fixedItems={testnetItems.map((i) => ({
+        label: i,
+        value: i,
+      }))}
+      fixedItemsLabel="Remote"
+      localStorageKeyCustomItems="topos-subnet-endpoints"
+      onValueChange={onValueChange}
+      selectPlaceholder="Select a Topos Subnet endpoint"
+      title="Topos Subnet endpoint"
+    />
   )
 }
 
