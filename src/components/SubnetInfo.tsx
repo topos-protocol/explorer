@@ -13,7 +13,7 @@ import {
   Tag,
   Typography,
 } from 'antd'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { BlocksContext } from '../contexts/blocks'
@@ -22,7 +22,6 @@ import { SubnetsContext } from '../contexts/subnets'
 import _Link from './Link'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
 import { CertificatesContext } from '../contexts/certificates'
-import useSubnetSubscribeToCertificates from '../hooks/useSubnetSubscribeToCertificates'
 
 const Link = styled(_Link)`
   animation-duration: 0.5s;
