@@ -1,5 +1,5 @@
 import { Menu as AntdMenu } from 'antd'
-import { MutableRefObject, useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
 import { TourRefsContext } from '../contexts/tourRefs'

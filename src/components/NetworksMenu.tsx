@@ -1,7 +1,7 @@
 import { BlockOutlined, PartitionOutlined } from '@ant-design/icons'
 import { useTheme } from '@emotion/react'
 import { FloatButton, Modal, Space, Typography } from 'antd'
-import { useCallback, useContext, useMemo, useRef, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 
 import logo from '../logo.svg'
 import logoWhite from '../logo_white.svg'

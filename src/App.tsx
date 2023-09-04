@@ -24,7 +24,7 @@ import {
 } from './contexts/routeParamsFirst'
 import useToposSubnetGetFromEndpoint from './hooks/useToposSubnetGetFromEndpoint'
 import AppInternals from './AppInternals'
-import { TourRefs, TourRefsContext } from './contexts/tourRefs'
+import { TourRefsContext } from './contexts/tourRefs'
 
 const Errors = styled.div`
   margin: 1rem auto;
