@@ -41,8 +41,6 @@ export default function useSubnetGetCertificates({
   const definedLimit = useMemo(() => limit || DEFAULT_LIMIT, [limit])
   const definedSkip = useMemo(() => skip || DEFAULT_SKIP, [skip])
 
-  console.log(sourceStreamPosition)
-
   const { data, error, loading } = useQuery(GET_CERTIFICATES, {
     variables: {
       fromSourceCheckpoint: {

@@ -1,7 +1,5 @@
+import { CaretRightOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
-import { useCallback, useContext, useState } from 'react'
-
-import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import {
   Card,
   Col,
@@ -15,13 +13,16 @@ import {
   Tag,
   Typography,
 } from 'antd'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import useSubnetSubscribeToCertificates from '../hooks/useSubnetSubscribeToCertificates'
-import SubnetNameAndLogo from './SubnetNameAndLogo'
-import { Link as _Link, useNavigate } from 'react-router-dom'
-import { SubnetsContext } from '../contexts/subnets'
-import { CaretRightOutlined } from '@ant-design/icons'
 import { BlocksContext } from '../contexts/blocks'
+import { SelectedNetworksContext } from '../contexts/selectedNetworks'
+import { SubnetsContext } from '../contexts/subnets'
+import _Link from './Link'
+import SubnetNameAndLogo from './SubnetNameAndLogo'
+import { CertificatesContext } from '../contexts/certificates'
+import useSubnetSubscribeToCertificates from '../hooks/useSubnetSubscribeToCertificates'
 
 const Link = styled(_Link)`
   animation-duration: 0.5s;
@@ -78,17 +79,8 @@ const SubnetInfo = () => {
   const { selectedSubnet } = useContext(SelectedNetworksContext)
   const { data: subnets } = useContext(SubnetsContext)
   const blocks = useContext(BlocksContext)
-  const { certificates } = useSubnetSubscribeToCertificates({
-    sourceSubnetIds: selectedSubnet
-      ? [
-          {
-            position: blocks[0]?.number,
-            sourceSubnetId: { value: selectedSubnet.id },
-          },
-        ]
-      : undefined,
-    limit: 1,
-  })
+  const certificates = useContext(CertificatesContext)
+
   const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate()
 
@@ -193,7 +185,8 @@ const SubnetInfo = () => {
         </Col>
         <Col md={24} lg={12}>
           <Divider orientation="left" style={{ margin: '2rem 0' }}>
-            Latest Certificates
+            Latest Certificates -{' '}
+            <Link to="/subnet/certificates">All certificates</Link>
           </Divider>
           <Search
             placeholder="Search certificate by id"

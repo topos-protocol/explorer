@@ -58,7 +58,7 @@ const Routes = () => {
           path="/subnet/:subnetId/transaction/:transactionHash"
           element={<SubnetTransaction />}
         />
-        <Route path="/certificates" element={<Certificates />} />
+        <Route path="/subnet/certificates" element={<Certificates />} />
         <Route
           path="/subnet/:subnetId/certificate/:certificatePositionOrId"
           element={<SubnetCertificate />}

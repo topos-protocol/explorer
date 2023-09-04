@@ -13,7 +13,7 @@ const ToposSubnetSelector = () => {
     () => ['rpc.topos-subnet.testnet-1.topos.technology'],
     []
   )
-  const defaultCustomItems = useMemo(() => ['http://localhost:10002'], [])
+  const defaultCustomItems = useMemo(() => ['localhost:10002'], [])
 
   const onValueChange = useCallback(
     async (endpoint: string) => {

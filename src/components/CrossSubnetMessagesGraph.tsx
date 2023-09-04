@@ -1,11 +1,20 @@
+import { InfoCircleOutlined } from '@ant-design/icons'
+import styled from '@emotion/styled'
+import { Alert as AntdAlert, List, Space, Tooltip, Typography } from 'antd'
 import ForceGraph from 'force-graph'
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 import { SubnetWithId } from '../types'
 import { SubnetsContext } from '../contexts/subnets'
 import useSubnetGetLatestBlockNumber from '../hooks/useSubnetGetLatestBlockNumber'
 import useSubnetSubscribeToCertificates from '../hooks/useSubnetSubscribeToCertificates'
 import { SourceStreamPosition } from '../__generated__/graphql'
+
+const { Text } = Typography
+
+const Alert = styled(AntdAlert)`
+  display: inline-block;
+`
 
 type Link = {
   certificateId: string
@@ -194,7 +203,40 @@ const CrossSubnetMessagesGraph = function () {
     },
     [JSON.stringify(certificatesWithTarget), subnets]
   )
-  return <div ref={graphElement} />
+  return (
+    <>
+      <Alert
+        message={
+          <Space>
+            <InfoCircleOutlined style={{ color: 'white' }} />
+            <Text>
+              Listening for certificates with cross-subnet messages from{' '}
+              <Tooltip
+                title={
+                  <List>
+                    {subnets?.map((subnet) => {
+                      const position = subnetsLatestBlockNumbers?.get(subnet.id)
+                      return (
+                        <List.Item key={subnet.id}>
+                          {subnet.name}: {position}
+                        </List.Item>
+                      )
+                    })}
+                  </List>
+                }
+              >
+                <b>
+                  <u>these positions</u>
+                </b>
+              </Tooltip>
+            </Text>
+          </Space>
+        }
+        type="info"
+      />
+      <div ref={graphElement} />
+    </>
+  )
 }
 
 export default CrossSubnetMessagesGraph

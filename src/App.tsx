@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Alert, Layout as AntdLayout } from 'antd'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 
 import { ErrorsContext } from './contexts/errors'
@@ -23,6 +23,8 @@ import {
   RouteParamsProcessing,
 } from './contexts/routeParamsFirst'
 import useToposSubnetGetFromEndpoint from './hooks/useToposSubnetGetFromEndpoint'
+import AppInternals from './AppInternals'
+import { TourRefs, TourRefsContext } from './contexts/tourRefs'
 
 const Errors = styled.div`
   margin: 1rem auto;
@@ -44,9 +46,18 @@ const App = () => {
   const [selectedTCEEndpoint, setSelectedTCEEndpoint] = useState<string>()
   const [subnets, setSubnets] = useState<SubnetWithId[]>()
   const { blocks } = useSubnetSubscribeToBlocks(selectedSubnet)
+
   const [errors, setErrors] = useState<string[]>([])
   const { registeredSubnets } = useRegisteredSubnets(selectedToposSubnet)
   const { getToposSubnetFromEndpoint } = useToposSubnetGetFromEndpoint()
+
+  const tourRefs = {
+    MenuRef: useRef<HTMLDivElement>(null),
+    NetworkSelectorRef: useRef<HTMLDivElement>(null),
+    NetworkSelectorToposSubnetRef: useRef<HTMLButtonElement>(null),
+    NetworkSelectorSubnetRef: useRef<HTMLButtonElement>(null),
+    NetworkSelectorTCERef: useRef<HTMLButtonElement>(null),
+  }
 
   const apolloClient = useMemo(
     () =>
@@ -131,24 +142,28 @@ const App = () => {
               >
                 <SubnetsContext.Provider value={{ data: subnets }}>
                   <BlocksContext.Provider value={blocks}>
-                    <Layout>
-                      <Header />
-                      {Boolean(errors.length) && (
-                        <Errors>
-                          {errors.map((e) => (
-                            <Alert
-                              type="error"
-                              showIcon
-                              closable
-                              message={e}
-                              key={e}
-                            />
-                          ))}
-                        </Errors>
-                      )}
-                      <Content />
-                      <Footer />
-                    </Layout>
+                    <TourRefsContext.Provider value={tourRefs}>
+                      <AppInternals>
+                        <Layout>
+                          <Header />
+                          {Boolean(errors.length) && (
+                            <Errors>
+                              {errors.map((e) => (
+                                <Alert
+                                  type="error"
+                                  showIcon
+                                  closable
+                                  message={e}
+                                  key={e}
+                                />
+                              ))}
+                            </Errors>
+                          )}
+                          <Content />
+                          <Footer />
+                        </Layout>
+                      </AppInternals>
+                    </TourRefsContext.Provider>
                   </BlocksContext.Provider>
                 </SubnetsContext.Provider>
               </SelectedNetworksContext.Provider>

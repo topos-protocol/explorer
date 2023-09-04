@@ -1,4 +1,4 @@
-import { Alert } from 'antd'
+import { Alert, Space } from 'antd'
 import { useContext, useEffect } from 'react'
 
 import RouteContainer from '../components/RouteContainer'
@@ -7,7 +7,9 @@ import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import { RouteParamsFirstContext } from '../contexts/routeParamsFirst'
 
 const CrossSubnetMessages = () => {
-  const { selectedTCEEndpoint } = useContext(SelectedNetworksContext)
+  const { selectedTCEEndpoint, selectedToposSubnet } = useContext(
+    SelectedNetworksContext
+  )
   const { setRouteParamsProcessing } = useContext(RouteParamsFirstContext)
 
   useEffect(
@@ -21,11 +23,26 @@ const CrossSubnetMessages = () => {
 
   return (
     <RouteContainer breadcrumbItems={[{ title: 'Cross-Subnet Messages' }]}>
-      {Boolean(selectedTCEEndpoint) ? (
-        <CertificateGraph />
-      ) : (
-        <Alert message="Please select a TCE endpoint first!" type="error" />
-      )}
+      <Space direction="vertical">
+        {Boolean(selectedTCEEndpoint) && Boolean(selectedToposSubnet) ? (
+          <CertificateGraph />
+        ) : (
+          <>
+            {!Boolean(selectedTCEEndpoint) && (
+              <Alert
+                message="Please select a TCE endpoint first!"
+                type="error"
+              />
+            )}
+            {!Boolean(selectedToposSubnet) && (
+              <Alert
+                message="Please select a Topos Subnet endpoint first!"
+                type="error"
+              />
+            )}
+          </>
+        )}
+      </Space>
     </RouteContainer>
   )
 }

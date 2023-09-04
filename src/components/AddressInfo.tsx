@@ -49,7 +49,7 @@ const AddressInfo = ({ address }: Props) => {
             knownContract: KnownContract.SubnetRegistratorContract,
           })
           break
-        case import.meta.env.VITE_TOPOS_CORE_CONTRACT_ADDRESS:
+        case import.meta.env.VITE_TOPOS_CORE_PROXY_CONTRACT_ADDRESS:
           setAddressType({
             contract: true,
             messagingContract: true,
