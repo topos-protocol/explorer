@@ -81,6 +81,7 @@ const CertificatesList = () => {
       sourceSubnetId: { value: selectedSubnet?.id || '' },
     },
   })
+
   const navigate = useNavigate()
 
   const handleSearch = useCallback((value: string) => {
@@ -93,7 +94,7 @@ const CertificatesList = () => {
         Certificates
       </Divider>
       <Descriptions>
-        <Descriptions.Item label="Name">
+        <Descriptions.Item label="Source subnet">
           <SubnetNameAndLogo subnet={selectedSubnet} />
         </Descriptions.Item>
       </Descriptions>
@@ -118,7 +119,7 @@ const CertificatesList = () => {
         rowKey="id"
         renderItem={(certificate) => (
           <Link
-            to={`/subnet/${selectedSubnet?.id}/certificate/${certificate.position}`}
+            to={`/subnet/${selectedSubnet?.id}/certificate/${certificate.id}`}
           >
             <Item
               actions={[

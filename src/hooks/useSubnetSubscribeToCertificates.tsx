@@ -9,7 +9,7 @@ import { SourceStreamPosition } from '../__generated__/graphql'
 const DEFAULT_LIMIT = 10
 
 const GET_CERTIFICATES = graphql(`
-  query Certificate($fromSourceCheckpoint: SourceCheckpoint!, $limit: Int!) {
+  query Certificates($fromSourceCheckpoint: SourceCheckpoint!, $limit: Int!) {
     certificates(fromSourceCheckpoint: $fromSourceCheckpoint, first: $limit) {
       prevId
       id
@@ -20,6 +20,7 @@ const GET_CERTIFICATES = graphql(`
       targetSubnets {
         value
       }
+      receiptsRootHash
       txRootHash
       verifier
     }

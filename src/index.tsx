@@ -1,3 +1,4 @@
+import { css, Global } from '@emotion/react'
 import { ConfigProvider, theme } from 'antd'
 import ReactDOM from 'react-dom/client'
 
@@ -20,6 +21,13 @@ root.render(
       },
     }}
   >
+    <Global
+      styles={css`
+        html {
+          background-color: black;
+        }
+      `}
+    />
     <App />
   </ConfigProvider>
   // </React.StrictMode>

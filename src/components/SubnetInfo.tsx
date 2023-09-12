@@ -83,9 +83,12 @@ const SubnetInfo = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate()
 
-  const handleSearch = useCallback((value: string) => {
-    navigate(`/subnet/block/${value}`)
-  }, [])
+  const handleSearch = useCallback(
+    (value: string) => {
+      navigate(`/subnet/${selectedSubnet?.id}/block/${value}`)
+    },
+    [selectedSubnet]
+  )
 
   return (
     <Space direction="vertical">
@@ -206,7 +209,7 @@ const SubnetInfo = () => {
             rowKey="id"
             renderItem={(certificate, index) => (
               <Link
-                to={`/subnet/${selectedSubnet?.id}/certificate/${certificate.position}`}
+                to={`/subnet/${selectedSubnet?.id}/certificate/${certificate.id}`}
               >
                 <Item
                   actions={[

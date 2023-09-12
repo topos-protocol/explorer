@@ -14,7 +14,6 @@ export default function useToposSubnetGetFromEndpoint() {
         const provider = new providers.JsonRpcProvider(
           sanitizeURLProtocol('http', endpoint)
         )
-        console.log(provider)
         const network = await provider.getNetwork()
         const chainId = network.chainId
 
