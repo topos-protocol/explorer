@@ -1,4 +1,4 @@
-import { SubnetRegistrator__factory } from '@topos-protocol/topos-smart-contracts/typechain-types'
+import { SubnetRegistrator__factory } from '@topos-protocol/topos-smart-contracts/typechain-types/factories/contracts/topos-core'
 import { ethers } from 'ethers'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { ErrorsContext } from '../contexts/errors'
