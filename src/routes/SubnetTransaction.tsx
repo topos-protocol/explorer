@@ -6,7 +6,7 @@ import RouteContainer from '../components/RouteContainer'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import SubnetNameAndLogo from '../components/SubnetNameAndLogo'
 import useSubnetGetTransaction from '../hooks/useSubnetGetTransaction'
-import SubnetTransactionInfo from '../components/SubnetTransactionInfo'
+import SubnetTransactionView from '../components/SubnetTransaction'
 import { RouteParamsFirstContext } from '../contexts/routeParamsFirst'
 
 const SubnetTransaction = () => {
@@ -38,7 +38,7 @@ const SubnetTransaction = () => {
     >
       <Space direction="vertical">
         {Boolean(transaction) && (
-          <SubnetTransactionInfo receipt={receipt} transaction={transaction} />
+          <SubnetTransactionView receipt={receipt} transaction={transaction} />
         )}
       </Space>
     </RouteContainer>

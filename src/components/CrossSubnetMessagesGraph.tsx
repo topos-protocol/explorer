@@ -1,6 +1,6 @@
 import { InfoCircleOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
-import { Alert as AntdAlert, List, Space, Tooltip, Typography } from 'antd'
+import { Alert as AntdAlert, Space, Typography } from 'antd'
 import ForceGraph from 'force-graph'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -210,25 +210,17 @@ const CrossSubnetMessagesGraph = function () {
           <Space>
             <InfoCircleOutlined style={{ color: 'white' }} />
             <Text>
-              Listening for certificates with cross-subnet messages from{' '}
-              <Tooltip
-                title={
-                  <List>
-                    {subnets?.map((subnet) => {
-                      const position = subnetsLatestBlockNumbers?.get(subnet.id)
-                      return (
-                        <List.Item key={subnet.id}>
-                          {subnet.name}: {position}
-                        </List.Item>
-                      )
-                    })}
-                  </List>
-                }
-              >
-                <b>
-                  <u>these positions</u>
-                </b>
-              </Tooltip>
+              Listening for certificates with cross-subnet messages from these
+              positions: (
+              {subnets?.map((subnet, index, array) => {
+                const position = subnetsLatestBlockNumbers?.get(subnet.id)
+                return (
+                  <span key={subnet.id}>
+                    {subnet.name}: {position}
+                    {index !== array.length - 1 ? ', ' : ')'}
+                  </span>
+                )
+              })}
             </Text>
           </Space>
         }

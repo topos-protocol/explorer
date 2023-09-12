@@ -13,6 +13,11 @@ export interface SubnetWithId extends Subnet {
   id: string
 }
 
+export interface Token {
+  addr: string
+  symbol: string
+}
+
 export interface FetchData<T> {
   data?: T
   error?: Error

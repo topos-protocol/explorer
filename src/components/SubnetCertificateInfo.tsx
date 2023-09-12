@@ -42,7 +42,6 @@ interface Props {
 const SubnetCertificateInfo = ({ certificate }: Props) => {
   const { selectedSubnet } = useContext(SelectedNetworksContext)
   const { data: subnets } = useContext(SubnetsContext)
-  console.log(certificate)
 
   const targetSubnets = useMemo(
     () =>
@@ -65,7 +64,9 @@ const SubnetCertificateInfo = ({ certificate }: Props) => {
       </Divider>
       <Descriptions>
         <Descriptions.Item label="Position">
-          {certificate?.position}
+          {certificate?.position !== undefined
+            ? certificate?.position
+            : 'Unknown'}
         </Descriptions.Item>
         <Descriptions.Item label="Id" span={2}>
           {certificate?.id}
@@ -81,13 +82,16 @@ const SubnetCertificateInfo = ({ certificate }: Props) => {
           </Link>
         </Descriptions.Item>
         <Descriptions.Item label="State root" span={3}>
-          {certificate?.stateRoot}
+          0x{certificate?.stateRoot}
+        </Descriptions.Item>
+        <Descriptions.Item label="Receipt trie root" span={3}>
+          {certificate?.receiptsRootHash}
         </Descriptions.Item>
         <Descriptions.Item label="Transaction trie root" span={3}>
-          {certificate?.txRootHash}
+          0x{certificate?.txRootHash}
         </Descriptions.Item>
         <Descriptions.Item label="Signature" span={2}>
-          {certificate?.signature}
+          0x{certificate?.signature}
         </Descriptions.Item>
       </Descriptions>
       <Row gutter={16}>

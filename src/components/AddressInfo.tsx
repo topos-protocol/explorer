@@ -1,10 +1,11 @@
-import * as ToposMessagingJSON from '@topos-protocol/topos-smart-contracts/artifacts/contracts/interfaces/IToposMessaging.sol/IToposMessaging.json'
 import { Space, Tag, Typography } from 'antd'
-import { Contract } from 'ethers'
 import { useContext, useEffect, useState } from 'react'
 
+import { CONST_ADDRESS_DEPLOYER_CONTRACT_ADDRESS } from '../constants'
+import { erc20MessagingContract } from '../contracts'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import useEthers from '../hooks/useEthers'
+import { Token } from '../types'
 
 const { Text } = Typography
 
@@ -12,11 +13,12 @@ enum KnownContract {
   ERC20MessagingContract = 'ERC20 Messaging Contract',
   SubnetRegistratorContract = 'Subnet Registrator Contract',
   ToposCoreContract = 'Topos Core Contract',
+  ConstAddrDeployerContract = 'Constant Address Deployer',
 }
 
 type AddressType = {
-  contract: boolean
-  messagingContract: boolean
+  contract?: boolean
+  erc20MessagingToken?: Token
   knownContract?: KnownContract
 }
 
@@ -27,10 +29,7 @@ interface Props {
 const AddressInfo = ({ address }: Props) => {
   const { selectedSubnet } = useContext(SelectedNetworksContext)
   const { provider } = useEthers({ subnet: selectedSubnet })
-  const [addressType, setAddressType] = useState<AddressType>({
-    contract: false,
-    messagingContract: false,
-  })
+  const [addressType, setAddressType] = useState<AddressType>({})
 
   useEffect(() => {
     async function processAddress() {
@@ -38,42 +37,37 @@ const AddressInfo = ({ address }: Props) => {
         case import.meta.env.VITE_ERC20_MESSAGING_CONTRACT_ADDRESS:
           setAddressType({
             contract: true,
-            messagingContract: true,
             knownContract: KnownContract.ERC20MessagingContract,
           })
           break
         case import.meta.env.VITE_SUBNET_REGISTRATOR_CONTRACT_ADDRESS:
           setAddressType({
             contract: true,
-            messagingContract: true,
             knownContract: KnownContract.SubnetRegistratorContract,
           })
           break
         case import.meta.env.VITE_TOPOS_CORE_PROXY_CONTRACT_ADDRESS:
           setAddressType({
             contract: true,
-            messagingContract: true,
             knownContract: KnownContract.ToposCoreContract,
           })
           break
+        case CONST_ADDRESS_DEPLOYER_CONTRACT_ADDRESS:
+          setAddressType({
+            contract: true,
+            knownContract: KnownContract.ConstAddrDeployerContract,
+          })
+          break
         default:
-          if (address) {
-            const code = await provider?.getCode(address)
+          if (provider && address) {
+            const code = await provider.getCode(address)
+            const contract = erc20MessagingContract.connect(provider)
+            const token = await contract.getTokenByAddress(address)
 
-            if (code !== '0x') {
-              const contract = new Contract(address, ToposMessagingJSON.abi)
-              const missingToposMessagingFunctions =
-                ToposMessagingJSON.abi.filter(
-                  (fragment) =>
-                    fragment.type === 'function' &&
-                    contract[fragment.name] === undefined
-                )
-
-              if (!missingToposMessagingFunctions.length) {
-                setAddressType({ contract: true, messagingContract: true })
-              } else {
-                setAddressType({ contract: true, messagingContract: false })
-              }
+            if (token.symbol) {
+              setAddressType({ erc20MessagingToken: token })
+            } else if (code !== '0x') {
+              setAddressType({ contract: true })
             }
           }
       }
@@ -84,25 +78,21 @@ const AddressInfo = ({ address }: Props) => {
 
   return (
     <Space>
-      {/* {address} */}
       <span>
-        {/* {addressType.contract && <Tag color="grey">Contract</Tag>}
-        {addressType.messagingContract && (
-          <Tag color="cyan">Messaging Contract</Tag>
-        )} */}
         {addressType.knownContract ? (
           <>
             <Tag color="gold">{addressType.knownContract}</Tag>
-            <Text>({address})</Text>
+            <small>({address})</small>
           </>
-        ) : addressType.messagingContract ? (
+        ) : addressType.erc20MessagingToken ? (
           <>
-            <Tag color="cyan">Messaging Contract</Tag>
-            <Text>({address})</Text>
+            <Tag>{addressType.erc20MessagingToken.symbol}</Tag>
+            <Text>token </Text>
+            <small>({address})</small>
           </>
         ) : addressType.contract ? (
           <>
-            <Tag color="grey">Contract</Tag>
+            <Tag>Contract</Tag>
             <Text>({address})</Text>
           </>
         ) : (

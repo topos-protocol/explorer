@@ -21,6 +21,7 @@ export type Certificate = {
   id: Scalars['String']['output'];
   prevId: Scalars['String']['output'];
   proof: Scalars['String']['output'];
+  receiptsRootHash: Scalars['String']['output'];
   signature: Scalars['String']['output'];
   sourceSubnetId: Scalars['String']['output'];
   stateRoot: Scalars['String']['output'];
@@ -33,14 +34,16 @@ export type CertificateId = {
   value: Scalars['String']['input'];
 };
 
-export type InputSubnetId = {
-  value: Scalars['String']['input'];
-};
-
 export type QueryRoot = {
   __typename?: 'QueryRoot';
+  certificate: Certificate;
   /** The endpoint for the GraphQL API, calling our trait implementation on the QueryRoot object */
   certificates: Array<Certificate>;
+};
+
+
+export type QueryRootCertificateArgs = {
+  certificateId: CertificateId;
 };
 
 
@@ -51,13 +54,13 @@ export type QueryRootCertificatesArgs = {
 
 export type SourceCheckpoint = {
   positions: Array<SourceStreamPosition>;
-  sourceSubnetIds: Array<InputSubnetId>;
+  sourceSubnetIds: Array<SubnetIdInput>;
 };
 
 export type SourceStreamPosition = {
   certificateId?: InputMaybe<CertificateId>;
   position: Scalars['Int']['input'];
-  sourceSubnetId: InputSubnetId;
+  sourceSubnetId: SubnetIdInput;
 };
 
 export type SubnetId = {
@@ -65,13 +68,25 @@ export type SubnetId = {
   value: Scalars['String']['output'];
 };
 
+export type SubnetIdInput = {
+  value: Scalars['String']['input'];
+};
+
 export type CertificateQueryVariables = Exact<{
+  certificateId: CertificateId;
+}>;
+
+
+export type CertificateQuery = { __typename?: 'QueryRoot', certificate: { __typename?: 'Certificate', prevId: string, id: string, proof: string, signature: string, sourceSubnetId: string, stateRoot: string, receiptsRootHash: string, txRootHash: string, verifier: number, targetSubnets: Array<{ __typename?: 'SubnetId', value: string }> } };
+
+export type CertificatesQueryVariables = Exact<{
   fromSourceCheckpoint: SourceCheckpoint;
   limit: Scalars['Int']['input'];
 }>;
 
 
-export type CertificateQuery = { __typename?: 'QueryRoot', certificates: Array<{ __typename?: 'Certificate', prevId: string, id: string, proof: string, signature: string, sourceSubnetId: string, stateRoot: string, txRootHash: string, verifier: number, targetSubnets: Array<{ __typename?: 'SubnetId', value: string }> }> };
+export type CertificatesQuery = { __typename?: 'QueryRoot', certificates: Array<{ __typename?: 'Certificate', prevId: string, id: string, proof: string, signature: string, sourceSubnetId: string, stateRoot: string, receiptsRootHash: string, txRootHash: string, verifier: number, targetSubnets: Array<{ __typename?: 'SubnetId', value: string }> }> };
 
 
-export const CertificateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Certificate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fromSourceCheckpoint"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceCheckpoint"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"certificates"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fromSourceCheckpoint"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fromSourceCheckpoint"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prevId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"proof"}},{"kind":"Field","name":{"kind":"Name","value":"signature"}},{"kind":"Field","name":{"kind":"Name","value":"sourceSubnetId"}},{"kind":"Field","name":{"kind":"Name","value":"stateRoot"}},{"kind":"Field","name":{"kind":"Name","value":"targetSubnets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"txRootHash"}},{"kind":"Field","name":{"kind":"Name","value":"verifier"}}]}}]}}]} as unknown as DocumentNode<CertificateQuery, CertificateQueryVariables>;
+export const CertificateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Certificate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certificateId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertificateId"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"certificate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"certificateId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certificateId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prevId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"proof"}},{"kind":"Field","name":{"kind":"Name","value":"signature"}},{"kind":"Field","name":{"kind":"Name","value":"sourceSubnetId"}},{"kind":"Field","name":{"kind":"Name","value":"stateRoot"}},{"kind":"Field","name":{"kind":"Name","value":"targetSubnets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"receiptsRootHash"}},{"kind":"Field","name":{"kind":"Name","value":"txRootHash"}},{"kind":"Field","name":{"kind":"Name","value":"verifier"}}]}}]}}]} as unknown as DocumentNode<CertificateQuery, CertificateQueryVariables>;
+export const CertificatesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Certificates"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fromSourceCheckpoint"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceCheckpoint"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"certificates"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fromSourceCheckpoint"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fromSourceCheckpoint"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prevId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"proof"}},{"kind":"Field","name":{"kind":"Name","value":"signature"}},{"kind":"Field","name":{"kind":"Name","value":"sourceSubnetId"}},{"kind":"Field","name":{"kind":"Name","value":"stateRoot"}},{"kind":"Field","name":{"kind":"Name","value":"targetSubnets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"receiptsRootHash"}},{"kind":"Field","name":{"kind":"Name","value":"txRootHash"}},{"kind":"Field","name":{"kind":"Name","value":"verifier"}}]}}]}}]} as unknown as DocumentNode<CertificatesQuery, CertificatesQueryVariables>;
