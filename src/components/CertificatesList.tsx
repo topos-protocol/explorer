@@ -139,10 +139,6 @@ const CertificatesList = () => {
                     <Tag>None</Tag>
                   )}
                 </Space>,
-                <Space key="list-vertical-date">
-                  <Text>Verifier</Text>
-                  <Text>{certificate.verifier}</Text>
-                </Space>,
               ]}
             >
               <List.Item.Meta
