@@ -11,7 +11,6 @@ import {
 } from 'antd'
 import { useContext, useMemo } from 'react'
 
-import Link from './Link'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
 import { Certificate, SubnetWithId } from '../types'
@@ -63,24 +62,24 @@ const SubnetCertificateInfo = ({ certificate }: Props) => {
         Info
       </Divider>
       <Descriptions>
-        <Descriptions.Item label="Position">
+        {/* <Descriptions.Item label="Position">
           {certificate?.position !== undefined
             ? certificate?.position
             : 'Unknown'}
-        </Descriptions.Item>
-        <Descriptions.Item label="Id" span={2}>
-          {certificate?.id}
-        </Descriptions.Item>
-        <Descriptions.Item label="Subnet">
+        </Descriptions.Item> */}
+        <Descriptions.Item label="Source subnet" span={3}>
           <SubnetNameAndLogo subnet={selectedSubnet} />
         </Descriptions.Item>
-        <Descriptions.Item label="Prev id" span={2}>
+        <Descriptions.Item label="Id" span={3}>
+          {certificate?.id}
+        </Descriptions.Item>
+        {/* <Descriptions.Item label="Prev id" span={2}>
           <Link
             to={`/subnet/${selectedSubnet?.id}/certificate/${certificate?.prevId}`}
           >
             {certificate?.prevId}
           </Link>
-        </Descriptions.Item>
+        </Descriptions.Item> */}
         <Descriptions.Item label="State root" span={3}>
           0x{certificate?.stateRoot}
         </Descriptions.Item>

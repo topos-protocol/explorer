@@ -2,13 +2,13 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
 import { Alert as AntdAlert, Space, Typography } from 'antd'
 import ForceGraph from 'force-graph'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef } from 'react'
 
 import { SubnetWithId } from '../types'
 import { SubnetsContext } from '../contexts/subnets'
-import useSubnetGetLatestBlockNumber from '../hooks/useSubnetGetLatestBlockNumber'
 import useSubnetSubscribeToCertificates from '../hooks/useSubnetSubscribeToCertificates'
 import { SourceStreamPosition } from '../__generated__/graphql'
+import { CrossSubnetMessagesGraphContext } from '../contexts/crossSubnetMessagesGraph'
 
 const { Text } = Typography
 
@@ -27,9 +27,9 @@ type Link = {
 
 const CrossSubnetMessagesGraph = function () {
   const { data: subnets } = useContext(SubnetsContext)
-  const { getSubnetLatestBlockNumber } = useSubnetGetLatestBlockNumber()
-  const [subnetsLatestBlockNumbers, setSubnetsLatestBlockNumbers] =
-    useState<Map<string, number>>()
+  const { subnetsLatestBlockNumbers } = useContext(
+    CrossSubnetMessagesGraphContext
+  )
   const { certificates } = useSubnetSubscribeToCertificates(
     subnets && subnetsLatestBlockNumbers
       ? {
@@ -62,30 +62,6 @@ const CrossSubnetMessagesGraph = function () {
     () => certificates.filter((c) => c.targetSubnets.length),
     [certificates]
   )
-
-  useEffect(() => {
-    async function getSubnetsLatestBlockNumbers() {
-      if (subnets) {
-        const newSubnetsLatestBlockNumbers = new Map<string, number>()
-        await Promise.all(
-          subnets.map(async (subnet) => {
-            const latestBlockNumber = await getSubnetLatestBlockNumber(subnet)
-
-            if (latestBlockNumber !== undefined) {
-              newSubnetsLatestBlockNumbers.set(subnet.id, latestBlockNumber)
-            }
-          })
-        )
-
-        setSubnetsLatestBlockNumbers(newSubnetsLatestBlockNumbers)
-      }
-    }
-
-    getSubnetsLatestBlockNumbers()
-  }, [subnets])
-
-  console.log(certificates)
-  console.log(certificatesWithTarget)
 
   useEffect(
     function renderCertificates() {
@@ -144,8 +120,6 @@ const CrossSubnetMessagesGraph = function () {
             }
           })
 
-        console.log(data)
-
         function drawNode(
           node: { x?: number; y?: number; img: typeof Image } & SubnetWithId,
           ctx: any
@@ -160,21 +134,6 @@ const CrossSubnetMessagesGraph = function () {
             size
           )
         }
-
-        // function getQuadraticXY(
-        //   t: number,
-        //   sx: number,
-        //   sy: number,
-        //   cp1x: number,
-        //   cp1y: number,
-        //   ex: number,
-        //   ey: number
-        // ) {
-        //   return {
-        //     x: (1 - t) * (1 - t) * sx + 2 * (1 - t) * t * cp1x + t * t * ex,
-        //     y: (1 - t) * (1 - t) * sy + 2 * (1 - t) * t * cp1y + t * t * ey - 3,
-        //   }
-        // }
 
         const myGraph = ForceGraph()
         myGraph(graphElement.current!)

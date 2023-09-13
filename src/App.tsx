@@ -25,6 +25,8 @@ import {
 import useToposSubnetGetFromEndpoint from './hooks/useToposSubnetGetFromEndpoint'
 import AppInternals from './AppInternals'
 import { TourRefsContext } from './contexts/tourRefs'
+import useSubnetGetLatestBlockNumber from './hooks/useSubnetGetLatestBlockNumber'
+import { CrossSubnetMessagesGraphContext } from './contexts/crossSubnetMessagesGraph'
 
 const Errors = styled.div`
   margin: 1rem auto;
@@ -50,6 +52,9 @@ const App = () => {
   const [errors, setErrors] = useState<string[]>([])
   const { registeredSubnets } = useRegisteredSubnets(selectedToposSubnet)
   const { getToposSubnetFromEndpoint } = useToposSubnetGetFromEndpoint()
+  const [subnetsLatestBlockNumbers, setSubnetsLatestBlockNumbers] =
+    useState<Map<string, number>>()
+  const { getSubnetLatestBlockNumber } = useSubnetGetLatestBlockNumber()
 
   const tourRefs = {
     MenuRef: useRef<HTMLDivElement>(null),
@@ -122,6 +127,27 @@ const App = () => {
     [routeParamsProcessing, subnets]
   )
 
+  useEffect(() => {
+    async function getSubnetsLatestBlockNumbers() {
+      if (subnets) {
+        const newSubnetsLatestBlockNumbers = new Map<string, number>()
+        await Promise.all(
+          subnets.map(async (subnet) => {
+            const latestBlockNumber = await getSubnetLatestBlockNumber(subnet)
+
+            if (latestBlockNumber !== undefined) {
+              newSubnetsLatestBlockNumbers.set(subnet.id, latestBlockNumber)
+            }
+          })
+        )
+
+        setSubnetsLatestBlockNumbers(newSubnetsLatestBlockNumbers)
+      }
+    }
+
+    getSubnetsLatestBlockNumbers()
+  }, [subnets])
+
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
@@ -142,28 +168,32 @@ const App = () => {
               >
                 <SubnetsContext.Provider value={{ data: subnets }}>
                   <BlocksContext.Provider value={blocks}>
-                    <TourRefsContext.Provider value={tourRefs}>
-                      <AppInternals>
-                        <Layout>
-                          <Header />
-                          {Boolean(errors.length) && (
-                            <Errors>
-                              {errors.map((e) => (
-                                <Alert
-                                  type="error"
-                                  showIcon
-                                  closable
-                                  message={e}
-                                  key={e}
-                                />
-                              ))}
-                            </Errors>
-                          )}
-                          <Content />
-                          <Footer />
-                        </Layout>
-                      </AppInternals>
-                    </TourRefsContext.Provider>
+                    <CrossSubnetMessagesGraphContext.Provider
+                      value={{ subnetsLatestBlockNumbers }}
+                    >
+                      <TourRefsContext.Provider value={tourRefs}>
+                        <AppInternals>
+                          <Layout>
+                            <Header />
+                            {Boolean(errors.length) && (
+                              <Errors>
+                                {errors.map((e) => (
+                                  <Alert
+                                    type="error"
+                                    showIcon
+                                    closable
+                                    message={e}
+                                    key={e}
+                                  />
+                                ))}
+                              </Errors>
+                            )}
+                            <Content />
+                            <Footer />
+                          </Layout>
+                        </AppInternals>
+                      </TourRefsContext.Provider>
+                    </CrossSubnetMessagesGraphContext.Provider>
                   </BlocksContext.Provider>
                 </SubnetsContext.Provider>
               </SelectedNetworksContext.Provider>

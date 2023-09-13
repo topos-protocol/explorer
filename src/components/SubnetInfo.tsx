@@ -1,4 +1,3 @@
-import { CaretRightOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
 import {
   Card,
@@ -217,7 +216,6 @@ const SubnetInfo = () => {
                       <Text>Target subnets:</Text>
                       {Boolean(certificate.targetSubnets.length) ? (
                         <Space>
-                          <CaretRightOutlined />
                           {certificate.targetSubnets.map((subnetId) => (
                             <SubnetNameAndLogo
                               key={subnetId.value}
@@ -231,7 +229,6 @@ const SubnetInfo = () => {
                         <Tag>None</Tag>
                       )}
                     </Space>,
-                    ,
                   ]}
                 >
                   <List.Item.Meta

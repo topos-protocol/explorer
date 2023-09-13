@@ -63,22 +63,8 @@ export default function useSubnetGetCertificates({
       },
       limit: definedLimit,
     },
+    pollInterval: 2000,
   })
-
-  console.log(data?.certificates)
-  console.log(
-    sourceStreamPosition && sourceStreamPosition.sourceSubnetId
-      ? [
-          {
-            sourceSubnetId: sourceStreamPosition.sourceSubnetId,
-            position: sourceStreamPosition.position
-              ? sourceStreamPosition.position
-              : definedSkip,
-          },
-        ]
-      : []
-  )
-  console.log(definedLimit)
 
   const certificates = useMemo(
     () =>
