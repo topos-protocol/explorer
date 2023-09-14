@@ -70,7 +70,6 @@ const SubnetTransactionReceiptLogs = ({ receipt }: Props) => {
       const logOrDescriptions: LogOrDescription[] = []
 
       receipt?.logs.forEach((log) => {
-        console.log(log)
         let iface: ethers.utils.Interface | undefined
 
         switch (log.address) {

@@ -1,12 +1,10 @@
-import { Tag, Typography } from 'antd'
+import { Tag } from 'antd'
 import { useContext, useEffect, useState } from 'react'
 
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import useEthers from '../hooks/useEthers'
 import { erc20MessagingContract } from '../contracts'
 import { Token } from '../types'
-
-const { Text } = Typography
 
 interface Props {
   address?: string
@@ -33,7 +31,7 @@ const TokenInfo = ({ address }: Props) => {
   return (
     <>
       <Tag>{token?.symbol}</Tag>
-      <Text>({token?.addr})</Text>
+      <small>({token?.addr})</small>
     </>
   )
 }

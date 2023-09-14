@@ -7,8 +7,14 @@ const TCESelector = () => {
   const { selectedTCEEndpoint, setSelectedTCEEndpoint } = useContext(
     SelectedNetworksContext
   )
-  const testnetItems = useMemo(() => ['rpc.tce.testnet-1.topos.technology'], [])
-  const defaultCustomItems = useMemo(() => ['http://localhost:4000'], [])
+  const testnetItems = useMemo(
+    () => [import.meta.env.VITE_TCE_ENDPOINT_REMOTE_DEFAULT],
+    []
+  )
+  const defaultCustomItems = useMemo(
+    () => [import.meta.env.VITE_TCE_ENDPOINT_CUSTOM_DEFAULT],
+    []
+  )
 
   const onValueChange = useCallback(
     async (endpoint: string) => {
@@ -27,7 +33,7 @@ const TCESelector = () => {
   return (
     <NetworkSelector
       allowCustomItems
-      customItemsLabel="Dev"
+      customItemsLabel="Custom"
       defaultCustomItems={defaultCustomItems.map((i) => ({
         label: i,
         value: i,
@@ -37,7 +43,7 @@ const TCESelector = () => {
         label: i,
         value: i,
       }))}
-      fixedItemsLabel="Remote"
+      fixedItemsLabel="Live networks"
       localStorageKeyCustomItems="tce-endpoints"
       onValueChange={onValueChange}
       selectPlaceholder="Select a TCE endpoint"

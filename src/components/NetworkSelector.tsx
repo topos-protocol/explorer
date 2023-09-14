@@ -1,6 +1,7 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { Divider, Form, Input, Select, Space, Button } from 'antd'
 import React, { useState, useCallback, useEffect, ReactNode } from 'react'
+import { removeURLProtocol } from '../utils'
 
 interface Props {
   allowCustomItems: boolean
@@ -10,6 +11,7 @@ interface Props {
   fixedItemsLabel: string
   initialValue?: string
   localStorageKeyCustomItems?: string
+  loading?: boolean
   onValueChange: (value: string) => void
   selectPlaceholder: string
   title: string
@@ -23,6 +25,7 @@ const NetworkSelector = ({
   fixedItemsLabel,
   initialValue,
   localStorageKeyCustomItems,
+  loading,
   onValueChange,
   selectPlaceholder,
   title,
@@ -41,7 +44,7 @@ const NetworkSelector = ({
   const addItem = useCallback(
     (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
       e.preventDefault()
-      setCustomItems((items) => [...items, newCustomItem])
+      setCustomItems((items) => [...items, removeURLProtocol(newCustomItem)])
       setNewCustomItem('')
     },
     [newCustomItem]
@@ -81,7 +84,9 @@ const NetworkSelector = ({
     <Form layout="vertical" form={form}>
       <Form.Item name="selector" label={title} initialValue={initialValue}>
         <Select
-          style={{ width: 300 }}
+          style={{ width: 400 }}
+          disabled={loading}
+          loading={loading}
           placeholder={selectPlaceholder}
           onChange={onValueChange}
           dropdownRender={(menu) => (
@@ -95,6 +100,7 @@ const NetworkSelector = ({
                       placeholder="Add custom value"
                       value={newCustomItem}
                       onChange={onNameChange}
+                      style={{ width: 260 }}
                     />
                     <Button
                       type="text"

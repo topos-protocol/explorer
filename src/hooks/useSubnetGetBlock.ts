@@ -23,10 +23,18 @@ export default function useSubnetGetBlock(
               : parseInt(blockHashOrNumber)
           )
           .then((block) => {
-            setBlock(block)
+            if (block) {
+              setBlock(block)
+            } else {
+              setErrors((e) => [
+                ...e,
+                `Could not find a block with the provided hash or number (${blockHashOrNumber})`,
+              ])
+            }
           })
           .catch((error) => {
-            setErrors((e) => [...e, error])
+            console.log(error)
+            setErrors((e) => [...e, error.message])
           })
       }
     },

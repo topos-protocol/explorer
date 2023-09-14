@@ -1,6 +1,10 @@
 import { useQuery } from '@apollo/client'
 
 import { graphql } from '../__generated__/gql'
+import { useContext, useEffect, useState } from 'react'
+import { ErrorsContext } from '../contexts/errors'
+import { Certificate } from '../__generated__/graphql'
+import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 // import { ErrorsContext } from '../contexts/errors'
 
 const GET_CERTIFICATE = graphql(`
@@ -24,12 +28,15 @@ const GET_CERTIFICATE = graphql(`
 
 interface Options {
   certificateId?: string
+  sourceSubnetId?: string
 }
 
 export default function useSubnetGetCertificateById({
   certificateId,
 }: Options = {}) {
-  // const { setErrors } = React.useContext(ErrorsContext)
+  const { setErrors } = useContext(ErrorsContext)
+  const { selectedSubnet } = useContext(SelectedNetworksContext)
+  const [certificate, setCertificate] = useState<Certificate>()
 
   const { data, error, loading } = useQuery(GET_CERTIFICATE, {
     variables: {
@@ -39,5 +46,24 @@ export default function useSubnetGetCertificateById({
     },
   })
 
-  return { certificate: data?.certificate, error, loading }
+  useEffect(
+    function processCertificate() {
+      if (data) {
+        if (
+          !data?.certificate ||
+          data.certificate.sourceSubnetId !== selectedSubnet?.id
+        ) {
+          setErrors((e) => [
+            ...e,
+            `Could not find a certificate with the provided id (${certificateId})`,
+          ])
+        } else {
+          setCertificate(data?.certificate)
+        }
+      }
+    },
+    [data?.certificate]
+  )
+
+  return { certificate, error, loading }
 }

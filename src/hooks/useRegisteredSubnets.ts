@@ -27,6 +27,7 @@ export default function useRegisteredSubnets(toposSubnet?: SubnetWithId) {
     function init() {
       async function getRegisteredSubnets() {
         setLoading(true)
+        setRegisteredSubnets([])
 
         const registeredSubnetsCount = await contract
           ?.getSubnetCount()

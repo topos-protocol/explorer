@@ -8,7 +8,8 @@ import { Space } from 'antd'
 import { useParams } from 'react-router-dom'
 import SubnetNameAndLogo from '../components/SubnetNameAndLogo'
 import { RouteParamsFirstContext } from '../contexts/routeParamsFirst'
-import useSubnetGetCertificates from '../hooks/useSubnetGetCertificates'
+// Deactivating certificate page by position for now
+// import useSubnetGetCertificates from '../hooks/useSubnetGetCertificates'
 import useSubnetGetCertificateById from '../hooks/useSubnetGetCertificateById'
 
 type CertificatePositionOrId = 'position' | 'id'
@@ -28,18 +29,20 @@ const SubnetCertificate = () => {
     return ethers.utils.isHexString(certificatePositionOrId) ? 'id' : 'position'
   }, [certificatePositionOrId])
 
-  const { certificates } = useSubnetGetCertificates({
-    sourceStreamPosition: {
-      position:
-        certificatePositionOrId &&
-        typeOfCertificatePositionOrId &&
-        typeOfCertificatePositionOrId === 'id'
-          ? parseInt(certificatePositionOrId)
-          : undefined,
-      sourceSubnetId: { value: selectedSubnet?.id || '' },
-    },
-    limit: 1,
-  })
+  // Deactivating certificate page by position for now
+  //
+  // const { certificates } = useSubnetGetCertificates({
+  //   sourceStreamPosition: {
+  //     position:
+  //       certificatePositionOrId &&
+  //       typeOfCertificatePositionOrId &&
+  //       typeOfCertificatePositionOrId === 'position'
+  //         ? parseInt(certificatePositionOrId)
+  //         : undefined,
+  //     sourceSubnetId: { value: selectedSubnet?.id || '' },
+  //   },
+  //   limit: 1,
+  // })
 
   const { certificate } = useSubnetGetCertificateById({
     certificateId:
@@ -48,6 +51,7 @@ const SubnetCertificate = () => {
       typeOfCertificatePositionOrId === 'id'
         ? certificatePositionOrId
         : undefined,
+    sourceSubnetId: selectedSubnet?.id,
   })
 
   useEffect(
@@ -69,14 +73,8 @@ const SubnetCertificate = () => {
       ]}
     >
       <Space direction="vertical">
-        {(Boolean(certificates) || Boolean(certificate)) && (
-          <SubnetCertificateInfo
-            certificate={
-              typeOfCertificatePositionOrId === 'id'
-                ? certificate
-                : certificates![0]
-            }
-          />
+        {Boolean(certificate) && (
+          <SubnetCertificateInfo certificate={certificate} />
         )}
       </Space>
     </RouteContainer>
