@@ -45,6 +45,7 @@ const SubnetTransactionData = ({ transaction }: Props) => {
 
               switch (description.name) {
                 case 'sendToken':
+                  console.log(description.args.targetSubnetId)
                   description.output = (
                     <Descriptions>
                       <Descriptions.Item label="Method" span={3}>

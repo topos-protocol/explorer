@@ -8,20 +8,22 @@ export function shortenAddress(
 }
 
 export function sanitizeURLProtocol(protocol: 'ws' | 'http', endpoint: string) {
-  return location.protocol.startsWith('https') &&
-    endpoint.indexOf('localhost') === -1 &&
-    !isStringIpAddress(endpoint)
+  return endpoint.indexOf('localhost') === -1 && !isIPAddressWithPort(endpoint)
     ? `${protocol}s://${endpoint}`
     : `${protocol}://${endpoint}`
 }
 
-function isStringIpAddress(value: string) {
-  if (
-    /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
-      value
-    )
-  ) {
-    return true
-  }
-  return false
+export function removeURLProtocol(endpoint: string) {
+  return endpoint.startsWith('http://') ||
+    endpoint.startsWith('https://') ||
+    endpoint.startsWith('ws://') ||
+    endpoint.startsWith('wss://')
+    ? new URL(endpoint).host
+    : endpoint
+}
+
+function isIPAddressWithPort(input: string): boolean {
+  // Regular expression to match an IP address with an optional port
+  const ipWithPortRegex = /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(:\d+)?$/
+  return ipWithPortRegex.test(input)
 }

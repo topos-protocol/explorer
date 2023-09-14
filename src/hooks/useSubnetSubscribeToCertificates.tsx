@@ -45,6 +45,7 @@ export default function useSubnetSubscribeToCertificates({
   const [storedPositions, setStoredPositions] = useState(
     new Map<string, number>()
   )
+  const uniqueSourceSubnetId = useRef<string | null>(null)
   const definedLimit = useMemo(() => limit || DEFAULT_LIMIT, [limit])
 
   useEffect(
@@ -56,8 +57,8 @@ export default function useSubnetSubscribeToCertificates({
 
   useEffect(
     function onNewSourceSubnetIds() {
-      const newStoredPositions = storedPositions
-      const newCurrentIndexes = currentIndexes
+      let newStoredPositions = storedPositions
+      let newCurrentIndexes = currentIndexes
 
       sourceSubnetIds?.forEach(({ position, sourceSubnetId }) => {
         if (
@@ -68,6 +69,18 @@ export default function useSubnetSubscribeToCertificates({
           newCurrentIndexes.set(sourceSubnetId.value, 0)
         }
       })
+
+      // Temp: clean certificates when subscription is to one subnet only and that subnet changes
+      if (
+        sourceSubnetIds?.length === 1 &&
+        sourceSubnetIds[0].sourceSubnetId.value !== uniqueSourceSubnetId.current
+      ) {
+        uniqueSourceSubnetId.current = sourceSubnetIds[0].sourceSubnetId.value
+        newStoredPositions = new Map<string, number>()
+        newCurrentIndexes = new Map<string, number>()
+        newCurrentIndexes.set(sourceSubnetIds[0].sourceSubnetId.value, 0)
+        setCertificates([])
+      }
 
       setStoredPositions(newStoredPositions)
       setCurrentIndexes(newCurrentIndexes)

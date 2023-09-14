@@ -27,6 +27,7 @@ import AppInternals from './AppInternals'
 import { TourRefsContext } from './contexts/tourRefs'
 import useSubnetGetLatestBlockNumber from './hooks/useSubnetGetLatestBlockNumber'
 import { CrossSubnetMessagesGraphContext } from './contexts/crossSubnetMessagesGraph'
+import { sanitizeURLProtocol } from './utils'
 
 const Errors = styled.div`
   margin: 1rem auto;
@@ -67,7 +68,7 @@ const App = () => {
   const apolloClient = useMemo(
     () =>
       new ApolloClient({
-        uri: selectedTCEEndpoint,
+        uri: sanitizeURLProtocol('http', selectedTCEEndpoint || ''),
         cache: new InMemoryCache(),
       }),
     [selectedTCEEndpoint]

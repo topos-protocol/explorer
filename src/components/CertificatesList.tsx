@@ -84,9 +84,12 @@ const CertificatesList = () => {
 
   const navigate = useNavigate()
 
-  const handleSearch = useCallback((value: string) => {
-    navigate(`/certificates/${value}`)
-  }, [])
+  const handleSearch = useCallback(
+    (value: string) => {
+      navigate(`/subnet/${selectedSubnet?.id}/certificate/${value}`)
+    },
+    [selectedSubnet]
+  )
 
   return (
     <Space direction="vertical">

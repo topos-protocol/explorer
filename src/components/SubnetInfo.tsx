@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import {
+  Alert,
   Card,
   Col,
   Descriptions,
@@ -16,11 +17,11 @@ import { useCallback, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { BlocksContext } from '../contexts/blocks'
+import { CertificatesContext } from '../contexts/certificates'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import { SubnetsContext } from '../contexts/subnets'
 import _Link from './Link'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
-import { CertificatesContext } from '../contexts/certificates'
 
 const Link = styled(_Link)`
   animation-duration: 0.5s;
@@ -74,7 +75,9 @@ const { Text } = Typography
 const PAGE_SIZE = 5
 
 const SubnetInfo = () => {
-  const { selectedSubnet } = useContext(SelectedNetworksContext)
+  const { selectedSubnet, selectedTCEEndpoint } = useContext(
+    SelectedNetworksContext
+  )
   const { data: subnets } = useContext(SubnetsContext)
   const blocks = useContext(BlocksContext)
   const certificates = useContext(CertificatesContext)
@@ -82,9 +85,16 @@ const SubnetInfo = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate()
 
-  const handleSearch = useCallback(
+  const handleBlockSearch = useCallback(
     (value: string) => {
       navigate(`/subnet/${selectedSubnet?.id}/block/${value}`)
+    },
+    [selectedSubnet]
+  )
+
+  const handleCertificateSearch = useCallback(
+    (value: string) => {
+      navigate(`/subnet/${selectedSubnet?.id}/certificate/${value}`)
     },
     [selectedSubnet]
   )
@@ -136,7 +146,7 @@ const SubnetInfo = () => {
           <Search
             placeholder="Search block by hash or number"
             allowClear
-            onSearch={handleSearch}
+            onSearch={handleBlockSearch}
             style={{ width: 300 }}
           />
           <List
@@ -192,60 +202,68 @@ const SubnetInfo = () => {
           <Search
             placeholder="Search certificate by id"
             allowClear
-            onSearch={handleSearch}
+            onSearch={handleCertificateSearch}
             style={{ width: 300 }}
           />
-          <List
-            dataSource={certificates}
-            pagination={{
-              position: 'bottom',
-              align: 'start',
-              onChange: (page) => {
-                setCurrentPage(page)
-              },
-              pageSize: PAGE_SIZE,
-            }}
-            rowKey="id"
-            renderItem={(certificate, index) => (
-              <Link
-                to={`/subnet/${selectedSubnet?.id}/certificate/${certificate.id}`}
-              >
-                <Item
-                  actions={[
-                    <Space key="list-vertical-tx">
-                      <Text>Target subnets:</Text>
-                      {Boolean(certificate.targetSubnets.length) ? (
-                        <Space>
-                          {certificate.targetSubnets.map((subnetId) => (
-                            <SubnetNameAndLogo
-                              key={subnetId.value}
-                              subnet={subnets?.find(
-                                (s) => s.id === subnetId.value
-                              )}
-                            />
-                          ))}
-                        </Space>
-                      ) : (
-                        <Tag>None</Tag>
-                      )}
-                    </Space>,
-                  ]}
+          {Boolean(!selectedTCEEndpoint) ? (
+            <Alert
+              message="Please select a TCE endpoint first!"
+              type="error"
+              style={{ marginTop: 10 }}
+            />
+          ) : (
+            <List
+              dataSource={certificates}
+              pagination={{
+                position: 'bottom',
+                align: 'start',
+                onChange: (page) => {
+                  setCurrentPage(page)
+                },
+                pageSize: PAGE_SIZE,
+              }}
+              rowKey="id"
+              renderItem={(certificate, index) => (
+                <Link
+                  to={`/subnet/${selectedSubnet?.id}/certificate/${certificate.id}`}
                 >
-                  <List.Item.Meta
-                    title={
-                      <Space>
-                        <Text>{certificate.position}</Text>
-                        {currentPage === 1 && index === 0 ? (
-                          <Tag color="gold">Latest</Tag>
-                        ) : null}
-                      </Space>
-                    }
-                    description={certificate.id}
-                  />
-                </Item>
-              </Link>
-            )}
-          />
+                  <Item
+                    actions={[
+                      <Space key="list-vertical-tx">
+                        <Text>Target subnets:</Text>
+                        {Boolean(certificate.targetSubnets.length) ? (
+                          <Space>
+                            {certificate.targetSubnets.map((subnetId) => (
+                              <SubnetNameAndLogo
+                                key={subnetId.value}
+                                subnet={subnets?.find(
+                                  (s) => s.id === subnetId.value
+                                )}
+                              />
+                            ))}
+                          </Space>
+                        ) : (
+                          <Tag>None</Tag>
+                        )}
+                      </Space>,
+                    ]}
+                  >
+                    <List.Item.Meta
+                      title={
+                        <Space>
+                          <Text>{certificate.position}</Text>
+                          {currentPage === 1 && index === 0 ? (
+                            <Tag color="gold">Latest</Tag>
+                          ) : null}
+                        </Space>
+                      }
+                      description={certificate.id}
+                    />
+                  </Item>
+                </Link>
+              )}
+            />
+          )}
         </Col>
       </Row>
     </Space>

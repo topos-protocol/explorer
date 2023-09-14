@@ -1,7 +1,7 @@
 import { BlockOutlined, PartitionOutlined } from '@ant-design/icons'
 import { useTheme } from '@emotion/react'
 import { FloatButton, Modal, Space, Typography } from 'antd'
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 import logo from '../logo.svg'
 import logoWhite from '../logo_white.svg'
@@ -30,6 +30,15 @@ const NetworksMenu = () => {
     NetworkSelectorToposSubnetRef,
   } = useContext(TourRefsContext)
   const [showModals, setShowModals] = useState<ShowModals>({})
+  const [windowInnerWidth, setWindowInnerWidth] = useState(window.innerWidth)
+
+  const handleWindowResize = useCallback(() => {
+    setWindowInnerWidth(window.innerWidth)
+  }, [])
+
+  useEffect(function initWindowResizeListener() {
+    window.addEventListener('resize', handleWindowResize)
+  }, [])
 
   const toggleModal = useCallback((type: keyof ShowModals) => {
     setShowModals((v) => ({ ...v, [type]: !v[type] }))
@@ -40,7 +49,7 @@ const NetworksMenu = () => {
       NetworkSelectorToposSubnetRef?.current != undefined
         ? NetworkSelectorToposSubnetRef?.current.getBoundingClientRect()
         : undefined,
-    [NetworkSelectorToposSubnetRef?.current]
+    [NetworkSelectorToposSubnetRef?.current, windowInnerWidth]
   )
 
   return (

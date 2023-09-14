@@ -1,23 +1,28 @@
-import { useContext, useCallback, useMemo } from 'react'
+import { useContext, useCallback, useMemo, useState } from 'react'
 
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import NetworkSelector from './NetworkSelector'
 import useToposSubnetGetFromEndpoint from '../hooks/useToposSubnetGetFromEndpoint'
 
 const ToposSubnetSelector = () => {
-  const { selectedToposSubnet, setSelectedToposSubnet } = useContext(
-    SelectedNetworksContext
-  )
+  const [loading, setLoading] = useState(false)
+  const { selectedToposSubnet, setSelectedSubnet, setSelectedToposSubnet } =
+    useContext(SelectedNetworksContext)
   const { getToposSubnetFromEndpoint } = useToposSubnetGetFromEndpoint()
-  const testnetItems = useMemo(
-    () => ['rpc.topos-subnet.testnet-1.topos.technology'],
+  const liveNetworkItems = useMemo(
+    () => [import.meta.env.VITE_TOPOS_SUBNET_ENDPOINT_REMOTE_DEFAULT],
     []
   )
-  const defaultCustomItems = useMemo(() => ['localhost:10002'], [])
+  const defaultCustomItems = useMemo(
+    () => [import.meta.env.VITE_TOPOS_SUBNET_ENDPOINT_CUSTOM_DEFAULT],
+    []
+  )
 
   const onValueChange = useCallback(
     async (endpoint: string) => {
       if (endpoint && setSelectedToposSubnet) {
+        setLoading(true)
+
         const storedToposSubnetEndpoint = localStorage.getItem(
           'toposSubnetEndpoint'
         )
@@ -25,28 +30,41 @@ const ToposSubnetSelector = () => {
           localStorage.setItem('toposSubnetEndpoint', endpoint)
         }
 
-        const toposSubnet = await getToposSubnetFromEndpoint(endpoint)
-        setSelectedToposSubnet(toposSubnet)
+        getToposSubnetFromEndpoint(endpoint)
+          .then((toposSubnet) => {
+            setSelectedToposSubnet(toposSubnet)
+          })
+          .catch(() => {
+            setSelectedToposSubnet(undefined)
+
+            if (setSelectedSubnet) {
+              setSelectedSubnet(undefined)
+            }
+          })
+          .finally(() => {
+            setLoading(false)
+          })
       }
     },
-    [setSelectedToposSubnet]
+    [setSelectedToposSubnet, setSelectedSubnet]
   )
 
   return (
     <NetworkSelector
       allowCustomItems
-      customItemsLabel="Dev"
+      customItemsLabel="Custom"
       defaultCustomItems={defaultCustomItems.map((i) => ({
         label: i,
         value: i,
       }))}
       initialValue={selectedToposSubnet?.endpoint}
-      fixedItems={testnetItems.map((i) => ({
+      fixedItems={liveNetworkItems.map((i) => ({
         label: i,
         value: i,
       }))}
-      fixedItemsLabel="Remote"
+      fixedItemsLabel="Live networks"
       localStorageKeyCustomItems="topos-subnet-endpoints"
+      loading={loading}
       onValueChange={onValueChange}
       selectPlaceholder="Select a Topos Subnet endpoint"
       title="Topos Subnet endpoint"
