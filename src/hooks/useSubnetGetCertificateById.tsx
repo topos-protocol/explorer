@@ -51,7 +51,8 @@ export default function useSubnetGetCertificateById({
       if (data) {
         if (
           !data?.certificate ||
-          data.certificate.sourceSubnetId !== selectedSubnet?.id
+          (data.certificate.sourceSubnetId !== selectedSubnet?.id &&
+            selectedSubnet)
         ) {
           setErrors((e) => [
             ...e,
