@@ -57,12 +57,13 @@ export default function useSubnetGetCertificateById({
             ...e,
             `Could not find a certificate with the provided id (${certificateId})`,
           ])
+          setCertificate(undefined)
         } else {
           setCertificate(data?.certificate)
         }
       }
     },
-    [data?.certificate]
+    [data?.certificate, selectedSubnet]
   )
 
   return { certificate, error, loading }
