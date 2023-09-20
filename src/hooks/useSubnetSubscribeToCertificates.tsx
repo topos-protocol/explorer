@@ -50,7 +50,9 @@ export default function useSubnetSubscribeToCertificates({
 
   useEffect(
     function storeLatestCurrentIndexes() {
-      currentIndexesRef.current = currentIndexes
+      window.setTimeout(() => {
+        currentIndexesRef.current = currentIndexes
+      }, 500)
     },
     [currentIndexes]
   )
