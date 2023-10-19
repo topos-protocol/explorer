@@ -8,12 +8,21 @@ import { useParams } from 'react-router-dom'
 import useSubnetGetBlock from '../hooks/useSubnetGetBlock'
 import SubnetNameAndLogo from '../components/SubnetNameAndLogo'
 import { RouteParamsFirstContext } from '../contexts/routeParamsFirst'
+import { ErrorsContext } from '../contexts/errors'
 
 const SubnetBlock = () => {
   const { blockHashOrNumber, subnetId } = useParams()
+  const { setErrors } = useContext(ErrorsContext)
   const { setRouteParamsProcessing } = useContext(RouteParamsFirstContext)
   const { selectedSubnet } = useContext(SelectedNetworksContext)
-  const { block } = useSubnetGetBlock(selectedSubnet, blockHashOrNumber)
+  const { block, errors } = useSubnetGetBlock(selectedSubnet, blockHashOrNumber)
+
+  useEffect(
+    function bubbleErrors() {
+      setErrors((e) => [...e, ...errors])
+    },
+    [errors]
+  )
 
   useEffect(
     function setSelectedSubnetFromParams() {

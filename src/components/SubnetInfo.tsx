@@ -5,7 +5,6 @@ import {
   Col,
   Descriptions,
   Divider,
-  Input,
   List,
   Row,
   Space,
@@ -13,8 +12,7 @@ import {
   Tag,
   Typography,
 } from 'antd'
-import { useCallback, useContext, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useContext, useState } from 'react'
 
 import { BlocksContext } from '../contexts/blocks'
 import { CertificatesContext } from '../contexts/certificates'
@@ -22,6 +20,7 @@ import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import { SubnetsContext } from '../contexts/subnets'
 import _Link from './Link'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
+import MainQuery from './MainQuery'
 
 const Link = styled(_Link)`
   animation-duration: 0.5s;
@@ -69,7 +68,6 @@ const Item = styled(List.Item)`
   }
 `
 
-const { Search } = Input
 const { Text } = Typography
 
 const PAGE_SIZE = 5
@@ -83,21 +81,6 @@ const SubnetInfo = () => {
   const certificates = useContext(CertificatesContext)
 
   const [currentPage, setCurrentPage] = useState(1)
-  const navigate = useNavigate()
-
-  const handleBlockSearch = useCallback(
-    (value: string) => {
-      navigate(`/subnet/${selectedSubnet?.id}/block/${value}`)
-    },
-    [selectedSubnet]
-  )
-
-  const handleCertificateSearch = useCallback(
-    (value: string) => {
-      navigate(`/subnet/${selectedSubnet?.id}/certificate/${value}`)
-    },
-    [selectedSubnet]
-  )
 
   return (
     <Space direction="vertical">
@@ -124,31 +107,37 @@ const SubnetInfo = () => {
       <Row gutter={16}>
         <Col span={8}>
           <Card>
-            <Statistic title="Latest block" value={blocks[0]?.number} />
+            <Statistic
+              title="Latest block"
+              loading={!Boolean(blocks[0])}
+              value={blocks[0]?.number}
+            />
           </Card>
         </Col>
-        {Boolean(certificates && certificates.length) && (
-          <Col span={8}>
-            <Card>
-              <Statistic
-                title="Latest certificate"
-                value={certificates![0].position}
-              />
-            </Card>
-          </Col>
-        )}
+        <Col span={8}>
+          <Card>
+            <Statistic
+              title="Latest certificate"
+              loading={!Boolean(certificates && certificates.length)}
+              value={
+                Boolean(certificates && certificates.length)
+                  ? certificates![0].position
+                  : 0
+              }
+            />
+          </Card>
+        </Col>
       </Row>
+      <Divider orientation="left" style={{ margin: '2rem 0' }}>
+        Query
+      </Divider>
+      <MainQuery />
       <Row gutter={32}>
         <Col md={24} lg={12}>
           <Divider orientation="left" style={{ margin: '2rem 0' }}>
-            Latest Blocks
+            Latest Blocks -{' '}
+            <Link to={`/subnet/${selectedSubnet?.id}/blocks`}>All blocks</Link>
           </Divider>
-          <Search
-            placeholder="Search block by hash or number"
-            allowClear
-            onSearch={handleBlockSearch}
-            style={{ width: 300 }}
-          />
           <List
             dataSource={blocks}
             pagination={{
@@ -197,14 +186,10 @@ const SubnetInfo = () => {
         <Col md={24} lg={12}>
           <Divider orientation="left" style={{ margin: '2rem 0' }}>
             Latest Certificates -{' '}
-            <Link to="/subnet/certificates">All certificates</Link>
+            <Link to={`/subnet/${selectedSubnet?.id}/certificates`}>
+              All certificates
+            </Link>
           </Divider>
-          <Search
-            placeholder="Search certificate by id"
-            allowClear
-            onSearch={handleCertificateSearch}
-            style={{ width: 300 }}
-          />
           {Boolean(!selectedTCEEndpoint) ? (
             <Alert
               message="Please select a TCE endpoint first!"
