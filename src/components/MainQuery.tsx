@@ -144,12 +144,15 @@ const MainQuery = () => {
   return (
     <Form form={form}>
       <Form.Item name="query">
-        <AutoComplete options={options} popupMatchSelectWidth={700}>
+        <AutoComplete
+          options={options}
+          popupMatchSelectWidth={700}
+          style={{ maxWidth: 700 }}
+        >
           <Search
             allowClear
             placeholder="Query by tx, block, certificate, or account"
             size="large"
-            style={{ maxWidth: 700 }}
           />
         </AutoComplete>
       </Form.Item>

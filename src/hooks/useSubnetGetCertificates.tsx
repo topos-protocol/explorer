@@ -52,11 +52,12 @@ export default function useSubnetGetCertificates({
             ? [
                 {
                   sourceSubnetId: sourceStreamPosition.sourceSubnetId,
-                  position: sourceStreamPosition.position
-                    ? isNaN(sourceStreamPosition.position!)
-                      ? Infinity
-                      : sourceStreamPosition.position
-                    : definedSkip,
+                  position:
+                    sourceStreamPosition.position != undefined
+                      ? isNaN(sourceStreamPosition.position!)
+                        ? Infinity
+                        : sourceStreamPosition.position
+                      : definedSkip,
                 },
               ]
             : [],

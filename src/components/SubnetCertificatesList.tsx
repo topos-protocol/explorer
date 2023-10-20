@@ -74,7 +74,7 @@ const CertificatesList = () => {
   const blocks = useContext(BlocksContext)
   const { selectedSubnet } = useContext(SelectedNetworksContext)
   const [currentPage, setCurrentPage] = useState(1)
-  const { certificates } = useSubnetGetCertificates({
+  const { certificates, loading } = useSubnetGetCertificates({
     limit: PAGE_SIZE,
     skip: PAGE_SIZE * (currentPage - 1),
     sourceStreamPosition: {
@@ -109,6 +109,7 @@ const CertificatesList = () => {
       />
       <List
         dataSource={certificates}
+        loading={loading}
         pagination={{
           position: 'bottom',
           align: 'start',

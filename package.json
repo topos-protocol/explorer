@@ -43,6 +43,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-router-dom": "^6.11.1",
+    "sturdy-websocket": "^0.2.1",
     "three-spritetext": "^1.8.1",
     "web-vitals": "^3.3.1"
   },

@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import React from 'react'
+import SturdyWebSocket from 'sturdy-websocket'
 
 import { Subnet } from '../types'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
@@ -17,7 +18,7 @@ export default function useEthers({ subnet }: Args = {}) {
 
     return endpoint
       ? new ethers.providers.WebSocketProvider(
-          sanitizeURLProtocol('ws', `${endpoint}/ws`)
+          new SturdyWebSocket(sanitizeURLProtocol('ws', `${endpoint}/ws`))
         )
       : undefined
   }, [subnet])
