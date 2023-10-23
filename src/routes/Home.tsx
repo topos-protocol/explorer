@@ -13,6 +13,7 @@ import RouteContainer from '../components/RouteContainer'
 import { RouteParamsFirstContext } from '../contexts/routeParamsFirst'
 import { TourRefsContext } from '../contexts/tourRefs'
 import logo from '../logo.svg'
+import { QuestionCircleFilled } from '@ant-design/icons'
 
 const Home = () => {
   const { setRouteParamsProcessing } = useContext(RouteParamsFirstContext)
@@ -103,7 +104,11 @@ const Home = () => {
             <div ref={testRef}>
               Start exploring by selecting networks on the top right corner!
             </div>
-            <Button type="primary" onClick={startTour}>
+            <Button
+              icon={<QuestionCircleFilled />}
+              type="dashed"
+              onClick={startTour}
+            >
               Show me around
             </Button>
           </Space>

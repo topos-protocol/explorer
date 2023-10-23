@@ -1,3 +1,4 @@
+import { CaretRightOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
 import { BlockWithTransactions } from '@ethersproject/abstract-provider'
 import {
@@ -14,10 +15,9 @@ import {
 import { ethers } from 'ethers'
 import { useContext } from 'react'
 
-import Link from './Link'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
+import Link from './Link'
 import SubnetNameAndLogo from './SubnetNameAndLogo'
-import { CaretRightOutlined } from '@ant-design/icons'
 import AddressInfo from './AddressInfo'
 
 const { Text } = Typography

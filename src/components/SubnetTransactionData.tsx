@@ -4,7 +4,7 @@ import * as ToposCoreJSON from '@topos-protocol/topos-smart-contracts/artifacts/
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { TransactionDescription } from 'ethers/lib/utils'
 import { Collapse, Descriptions, Tag, Typography } from 'antd'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { ReactNode, useContext, useEffect, useState } from 'react'
 
 import SubnetNameAndLogo from './SubnetNameAndLogo'
@@ -44,8 +44,33 @@ const SubnetTransactionData = ({ transaction }: Props) => {
                 })
 
               switch (description.name) {
+                case 'execute':
+                  description.output = (
+                    <Descriptions>
+                      <Descriptions.Item label="Method" span={3}>
+                        <Tag color="pink">{description?.name}</Tag>
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Log indexes">
+                        {description?.args.logIndexes.map(
+                          (logIndex: BigNumber, index: number) => (
+                            <span key={index}>
+                              {`${
+                                index !== 0 ? ' | ' : ''
+                              }${logIndex.toString()}`}
+                            </span>
+                          )
+                        )}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Receipt root" span={2}>
+                        {description.args.receiptRoot}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Proof blob" span={3}>
+                        {description?.args.proofBlob}
+                      </Descriptions.Item>
+                    </Descriptions>
+                  )
+                  break
                 case 'sendToken':
-                  console.log(description.args.targetSubnetId)
                   description.output = (
                     <Descriptions>
                       <Descriptions.Item label="Method" span={3}>

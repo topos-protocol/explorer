@@ -13,7 +13,7 @@ root.render(
       algorithm: theme.darkAlgorithm,
       components: {
         Layout: {
-          colorBgHeader: 'transparent',
+          headerBg: 'transparent',
         },
         Menu: {
           darkItemBg: 'transparent',

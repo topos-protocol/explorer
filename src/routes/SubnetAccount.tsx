@@ -1,31 +1,17 @@
-import { Space } from 'antd'
 import { useContext, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
 
 import RouteContainer from '../components/RouteContainer'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
+import SubnetAccountInfo from '../components/SubnetAccountInfo'
+import { Space } from 'antd'
+import { useParams } from 'react-router-dom'
 import SubnetNameAndLogo from '../components/SubnetNameAndLogo'
-import useSubnetGetTransaction from '../hooks/useSubnetGetTransactionAndReceipt'
-import SubnetTransactionView from '../components/SubnetTransaction'
 import { RouteParamsFirstContext } from '../contexts/routeParamsFirst'
-import { ErrorsContext } from '../contexts/errors'
 
-const SubnetTransaction = () => {
-  const { subnetId, transactionHash } = useParams()
-  const { setErrors } = useContext(ErrorsContext)
+const SubnetAccount = () => {
+  const { accountAddress, subnetId } = useParams()
   const { setRouteParamsProcessing } = useContext(RouteParamsFirstContext)
   const { selectedSubnet } = useContext(SelectedNetworksContext)
-  const { errors, receipt, transaction } = useSubnetGetTransaction(
-    selectedSubnet,
-    transactionHash
-  )
-
-  useEffect(
-    function bubbleErrors() {
-      setErrors((e) => [...e, ...errors])
-    },
-    [errors]
-  )
 
   useEffect(
     function setSelectedSubnetFromParams() {
@@ -41,17 +27,17 @@ const SubnetTransaction = () => {
       breadcrumbItems={[
         { title: 'Subnet' },
         { title: <SubnetNameAndLogo subnet={selectedSubnet} /> },
-        { title: 'Transaction' },
-        { title: transactionHash },
+        { title: 'Account' },
+        { title: accountAddress },
       ]}
     >
       <Space direction="vertical">
-        {Boolean(transaction) && (
-          <SubnetTransactionView receipt={receipt} transaction={transaction} />
+        {accountAddress !== undefined && (
+          <SubnetAccountInfo address={accountAddress} />
         )}
       </Space>
     </RouteContainer>
   )
 }
 
-export default SubnetTransaction
+export default SubnetAccount

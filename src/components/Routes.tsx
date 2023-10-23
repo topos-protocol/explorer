@@ -5,14 +5,16 @@ import { createPortal } from 'react-dom'
 import { Route, Routes as RouterRoutes } from 'react-router-dom'
 
 import { RouteParamsFirstContext } from '../contexts/routeParamsFirst'
-import Home from '../routes/Home'
 import _404 from '../routes/404'
-import SubnetBlock from '../routes/SubnetBlock'
-import Subnet from '../routes/Subnet'
-import Certificates from '../routes/Certificates'
 import CrossSubnetMessages from '../routes/CrossSubnetMessages'
-import SubnetTransaction from '../routes/SubnetTransaction'
+import Home from '../routes/Home'
+import Subnet from '../routes/Subnet'
+import SubnetAccount from '../routes/SubnetAccount'
+import SubnetBlock from '../routes/SubnetBlock'
+import SubnetBlocks from '../routes/SubnetBlocks'
 import SubnetCertificate from '../routes/SubnetCertificate'
+import SubnetCertificates from '../routes/SubnetCertificates'
+import SubnetTransaction from '../routes/SubnetTransaction'
 import LoadingScreen from './LoadingScreen'
 
 const { Content: AntdContent } = Layout
@@ -58,10 +60,18 @@ const Routes = () => {
           path="/subnet/:subnetId/transaction/:transactionHash"
           element={<SubnetTransaction />}
         />
-        <Route path="/subnet/certificates" element={<Certificates />} />
+        <Route path="/subnet/:subnetId/blocks" element={<SubnetBlocks />} />
+        <Route
+          path="/subnet/:subnetId/certificates"
+          element={<SubnetCertificates />}
+        />
         <Route
           path="/subnet/:subnetId/certificate/:certificatePositionOrId"
           element={<SubnetCertificate />}
+        />
+        <Route
+          path="/subnet/:subnetId/account/:accountAddress"
+          element={<SubnetAccount />}
         />
         <Route
           path="/cross-subnet-messages"

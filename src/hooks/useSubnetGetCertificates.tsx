@@ -3,7 +3,6 @@ import { useMemo } from 'react'
 
 import { graphql } from '../__generated__/gql'
 import { SourceStreamPosition } from '../__generated__/graphql'
-// import { ErrorsContext } from '../contexts/errors'
 
 const DEFAULT_LIMIT = 10
 const DEFAULT_SKIP = 0
@@ -38,7 +37,6 @@ export default function useSubnetGetCertificates({
   skip,
   sourceStreamPosition,
 }: Options = {}) {
-  // const { setErrors } = React.useContext(ErrorsContext)
   const definedLimit = useMemo(() => limit || DEFAULT_LIMIT, [limit])
   const definedSkip = useMemo(() => skip || DEFAULT_SKIP, [skip])
 
@@ -54,9 +52,12 @@ export default function useSubnetGetCertificates({
             ? [
                 {
                   sourceSubnetId: sourceStreamPosition.sourceSubnetId,
-                  position: sourceStreamPosition.position
-                    ? sourceStreamPosition.position
-                    : definedSkip,
+                  position:
+                    sourceStreamPosition.position != undefined
+                      ? isNaN(sourceStreamPosition.position!)
+                        ? Infinity
+                        : sourceStreamPosition.position
+                      : definedSkip,
                 },
               ]
             : [],

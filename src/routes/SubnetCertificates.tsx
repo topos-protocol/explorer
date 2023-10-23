@@ -1,12 +1,15 @@
 import { Alert, Space } from 'antd'
 import { useContext, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 
+import CertificatesList from '../components/SubnetCertificatesList'
 import RouteContainer from '../components/RouteContainer'
-import { SelectedNetworksContext } from '../contexts/selectedNetworks'
-import CertificatesList from '../components/CertificatesList'
 import { RouteParamsFirstContext } from '../contexts/routeParamsFirst'
+import { SelectedNetworksContext } from '../contexts/selectedNetworks'
+import SubnetNameAndLogo from '../components/SubnetNameAndLogo'
 
 const Certificates = () => {
+  const { subnetId } = useParams()
   const { selectedSubnet, selectedTCEEndpoint } = useContext(
     SelectedNetworksContext
   )
@@ -15,14 +18,20 @@ const Certificates = () => {
   useEffect(
     function setPageReady() {
       if (setRouteParamsProcessing) {
-        setRouteParamsProcessing({ isReady: true })
+        setRouteParamsProcessing({ isReady: true, subnetId })
       }
     },
     [setRouteParamsProcessing]
   )
 
   return (
-    <RouteContainer breadcrumbItems={[{ title: 'Certificates' }]}>
+    <RouteContainer
+      breadcrumbItems={[
+        { title: 'Subnet' },
+        { title: <SubnetNameAndLogo subnet={selectedSubnet} /> },
+        { title: 'Certificates' },
+      ]}
+    >
       <Space direction="vertical">
         {Boolean(selectedTCEEndpoint) && Boolean(selectedSubnet) ? (
           <CertificatesList />

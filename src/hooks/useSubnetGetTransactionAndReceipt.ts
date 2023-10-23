@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'
-import { ErrorsContext } from '../contexts/errors'
+import { useEffect, useState } from 'react'
 
 import { Subnet } from '../types'
 import useEthers from './useEthers'
@@ -12,10 +11,10 @@ export default function useSubnetGetTransactionAndReceipt(
   subnet?: Subnet,
   transactionHash?: string
 ) {
-  const { setErrors } = React.useContext(ErrorsContext)
   const { provider } = useEthers({ subnet })
-  const [transaction, setTransaction] = React.useState<TransactionResponse>()
-  const [receipt, setReceipt] = React.useState<TransactionReceipt>()
+  const [transaction, setTransaction] = useState<TransactionResponse>()
+  const [receipt, setReceipt] = useState<TransactionReceipt>()
+  const [errors, setErrors] = useState<string[]>([])
 
   useEffect(
     function getBlock() {
@@ -26,6 +25,7 @@ export default function useSubnetGetTransactionAndReceipt(
             setTransaction(transaction)
           })
           .catch((error) => {
+            setTransaction(undefined)
             setErrors((e) => [...e, error])
           })
 
@@ -35,12 +35,16 @@ export default function useSubnetGetTransactionAndReceipt(
             setReceipt(receipt)
           })
           .catch((error) => {
+            setReceipt(undefined)
             setErrors((e) => [...e, error])
           })
+      } else {
+        setTransaction(undefined)
+        setReceipt(undefined)
       }
     },
     [provider, transactionHash]
   )
 
-  return { receipt, transaction }
+  return { errors, receipt, transaction }
 }
