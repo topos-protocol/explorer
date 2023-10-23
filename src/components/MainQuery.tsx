@@ -9,6 +9,7 @@ import useSubnetGetTransactionAndReceipt from '../hooks/useSubnetGetTransactionA
 import useSubnetGetCertificateById from '../hooks/useSubnetGetCertificateById'
 import useSubnetGetCertificates from '../hooks/useSubnetGetCertificates'
 import useSubnetGetAccountBalance from '../hooks/useSubnetGetAccountBalance'
+import { SearchOutlined } from '@ant-design/icons'
 
 const Link = styled(_Link)`
   color: ${({ theme }) => theme.colorText};
@@ -18,29 +19,28 @@ const Link = styled(_Link)`
   }
 `
 
-const { Search } = Input
-
 const MainQuery = () => {
   const [form] = Form.useForm()
-  const query = Form.useWatch('query', form)
+  const query: string = Form.useWatch('query', form)
+  const sanitizedQuery = useMemo(() => query?.trim(), [query])
   const { selectedSubnet } = useContext(SelectedNetworksContext)
-  const { block } = useSubnetGetBlock(selectedSubnet, query)
+  const { block } = useSubnetGetBlock(selectedSubnet, sanitizedQuery)
   const { transaction } = useSubnetGetTransactionAndReceipt(
     selectedSubnet,
-    query
+    sanitizedQuery
   )
   const { certificate } = useSubnetGetCertificateById({
-    certificateId: query,
+    certificateId: sanitizedQuery,
     sourceSubnetId: selectedSubnet?.id,
   })
   const { certificates: certificatesByPosition } = useSubnetGetCertificates({
     limit: 1,
     sourceStreamPosition: {
-      position: isNaN(+query) ? Infinity : parseInt(query),
+      position: isNaN(+sanitizedQuery) ? Infinity : parseInt(sanitizedQuery),
       sourceSubnetId: { value: selectedSubnet?.id || '' },
     },
   })
-  const { balance } = useSubnetGetAccountBalance(selectedSubnet, query)
+  const { balance } = useSubnetGetAccountBalance(selectedSubnet, sanitizedQuery)
 
   const options = useMemo(() => {
     const options = []
@@ -128,11 +128,13 @@ const MainQuery = () => {
         options: [
           {
             label: (
-              <Link to={`/subnet/${selectedSubnet?.id}/account/${query}`}>
-                {query}
+              <Link
+                to={`/subnet/${selectedSubnet?.id}/account/${sanitizedQuery}`}
+              >
+                {sanitizedQuery}
               </Link>
             ),
-            value: query,
+            value: sanitizedQuery,
           },
         ],
       })
@@ -149,7 +151,8 @@ const MainQuery = () => {
           popupMatchSelectWidth={700}
           style={{ maxWidth: 700 }}
         >
-          <Search
+          <Input
+            addonBefore={<SearchOutlined />}
             allowClear
             placeholder="Query by tx, block, certificate, or account"
             size="large"
