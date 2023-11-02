@@ -69,9 +69,10 @@ const NetworksMenu = () => {
               <Space direction="vertical" size={0}>
                 <Text>Select a Topos Subnet endpoint</Text>
                 {Boolean(selectedToposSubnet) && (
-                  <Text
-                    strong
-                  >{`(currently: ${selectedToposSubnet?.endpoint})`}</Text>
+                  <Text strong>{`(currently: ${
+                    selectedToposSubnet?.endpointWs ||
+                    selectedToposSubnet?.endpointHttp
+                  })`}</Text>
                 )}
               </Space>
             }

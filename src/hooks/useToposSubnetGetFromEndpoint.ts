@@ -4,7 +4,6 @@ import { useCallback, useContext } from 'react'
 import { ErrorsContext } from '../contexts/errors'
 import { toposCoreContract } from '../contracts'
 import { SubnetWithId } from '../types'
-import { sanitizeURLProtocol } from '../utils'
 
 export default function useToposSubnetGetFromEndpoint() {
   const { setErrors } = useContext(ErrorsContext)
@@ -14,9 +13,11 @@ export default function useToposSubnetGetFromEndpoint() {
       new Promise<SubnetWithId>(async (resolve, reject) => {
         if (endpoint) {
           try {
-            const provider = new providers.JsonRpcProvider(
-              sanitizeURLProtocol('http', endpoint)
-            )
+            const url = new URL(endpoint)
+            const isURLWs = url.protocol.startsWith('ws')
+            const provider = isURLWs
+              ? new providers.WebSocketProvider(endpoint)
+              : new providers.JsonRpcProvider(endpoint)
 
             const network = await provider.getNetwork()
             const chainId = network.chainId
@@ -27,7 +28,8 @@ export default function useToposSubnetGetFromEndpoint() {
             resolve({
               chainId: BigNumber.from(chainId.toString()),
               currencySymbol: 'TOPOS',
-              endpoint,
+              endpointHttp: isURLWs ? '' : endpoint,
+              endpointWs: isURLWs ? endpoint : '',
               id: subnetId,
               logoURL: '/logo.svg',
               name: 'Topos Subnet',

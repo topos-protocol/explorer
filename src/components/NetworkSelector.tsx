@@ -1,7 +1,6 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { Divider, Form, Input, Select, Space, Button } from 'antd'
 import React, { useState, useCallback, useEffect, ReactNode } from 'react'
-import { removeURLProtocol } from '../utils'
 
 interface Props {
   allowCustomItems: boolean
@@ -44,7 +43,7 @@ const NetworkSelector = ({
   const addItem = useCallback(
     (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
       e.preventDefault()
-      setCustomItems((items) => [...items, removeURLProtocol(newCustomItem)])
+      setCustomItems((items) => [...items, newCustomItem])
       setNewCustomItem('')
     },
     [newCustomItem]

@@ -57,7 +57,9 @@ const ToposSubnetSelector = () => {
         label: i,
         value: i,
       }))}
-      initialValue={selectedToposSubnet?.endpoint}
+      initialValue={
+        selectedToposSubnet?.endpointWs || selectedToposSubnet?.endpointHttp
+      }
       fixedItems={liveNetworkItems.map((i) => ({
         label: i,
         value: i,

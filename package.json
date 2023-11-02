@@ -33,7 +33,7 @@
     "@apollo/client": "^3.7.15",
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
-    "@topos-protocol/topos-smart-contracts": "^1.2.2",
+    "@topos-protocol/topos-smart-contracts": "^2.0.0-rc1",
     "3d-force-graph": "^1.71.4",
     "antd": "^5.10.1",
     "axios": "^1.4.0",
