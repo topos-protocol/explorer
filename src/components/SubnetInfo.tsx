@@ -101,7 +101,7 @@ const SubnetInfo = () => {
           {selectedSubnet?.currencySymbol}
         </Descriptions.Item>
         <Descriptions.Item label="RPC Endpoint">
-          {selectedSubnet?.endpoint}
+          {selectedSubnet?.endpointWs} | {selectedSubnet?.endpointHttp}
         </Descriptions.Item>
       </Descriptions>
       <Row gutter={16}>

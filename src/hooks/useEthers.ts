@@ -1,10 +1,9 @@
-import { ethers } from 'ethers'
-import React from 'react'
+import { providers } from 'ethers'
+import { useContext, useMemo } from 'react'
 import SturdyWebSocket from 'sturdy-websocket'
 
 import { Subnet } from '../types'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
-import { sanitizeURLProtocol } from '../utils'
 
 interface Args {
   subnet?: Subnet
@@ -12,15 +11,19 @@ interface Args {
 }
 
 export default function useEthers({ subnet }: Args = {}) {
-  const { selectedToposSubnet } = React.useContext(SelectedNetworksContext)
-  const provider = React.useMemo(() => {
-    const endpoint = subnet?.endpoint || selectedToposSubnet?.endpoint
+  const { selectedToposSubnet } = useContext(SelectedNetworksContext)
+  const provider = useMemo(() => {
+    const _subnet = subnet || selectedToposSubnet
+    const _endpoint = _subnet?.endpointWs || _subnet?.endpointHttp
 
-    return endpoint
-      ? new ethers.providers.WebSocketProvider(
-          new SturdyWebSocket(sanitizeURLProtocol('ws', `${endpoint}/ws`))
-        )
-      : undefined
+    if (_endpoint) {
+      const _url = new URL(_endpoint)
+      return _url.protocol.startsWith('ws')
+        ? new providers.WebSocketProvider(new SturdyWebSocket(_endpoint))
+        : new providers.JsonRpcProvider(_endpoint)
+    }
+
+    return
   }, [subnet])
 
   return {

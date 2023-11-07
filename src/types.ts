@@ -2,7 +2,8 @@ import { BigNumber } from 'ethers'
 import { Certificate as CertificateFromQuery } from './__generated__/graphql'
 
 export interface Subnet {
-  endpoint: string
+  endpointHttp: string
+  endpointWs: string
   logoURL: string
   name: string
   currencySymbol: string
