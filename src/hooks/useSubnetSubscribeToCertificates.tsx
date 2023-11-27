@@ -15,7 +15,9 @@ const GET_CERTIFICATES = graphql(`
       id
       proof
       signature
-      sourceSubnetId
+      sourceSubnetId {
+        value
+      }
       stateRoot
       targetSubnets {
         value
@@ -123,13 +125,18 @@ export default function useSubnetSubscribeToCertificates({
         const newCertificates: Certificate[] = []
 
         data.certificates.forEach((certificate) => {
-          const currentIndex = newCurrentIndexes.get(certificate.sourceSubnetId)
+          const currentIndex = newCurrentIndexes.get(
+            certificate.sourceSubnetId.value
+          )
 
           if (currentIndex !== undefined) {
-            newCurrentIndexes.set(certificate.sourceSubnetId, currentIndex + 1)
+            newCurrentIndexes.set(
+              certificate.sourceSubnetId.value,
+              currentIndex + 1
+            )
 
             const sourcePosition = storedPositions.get(
-              certificate.sourceSubnetId
+              certificate.sourceSubnetId.value
             )
             newCertificates.push({
               ...certificate,
@@ -146,6 +153,7 @@ export default function useSubnetSubscribeToCertificates({
     },
     [data?.certificates]
   )
+  console.log(certificates)
 
   return { certificates, error, loading }
 }

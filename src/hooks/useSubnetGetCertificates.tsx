@@ -14,7 +14,9 @@ const GET_CERTIFICATES = graphql(`
       id
       proof
       signature
-      sourceSubnetId
+      sourceSubnetId {
+        value
+      }
       stateRoot
       targetSubnets {
         value

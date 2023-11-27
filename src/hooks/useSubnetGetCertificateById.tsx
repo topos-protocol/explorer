@@ -14,7 +14,9 @@ const GET_CERTIFICATE = graphql(`
       id
       proof
       signature
-      sourceSubnetId
+      sourceSubnetId {
+        value
+      }
       stateRoot
       targetSubnets {
         value
@@ -51,7 +53,7 @@ export default function useSubnetGetCertificateById({
       if (data) {
         if (
           !data?.certificate ||
-          (data.certificate.sourceSubnetId !== selectedSubnet?.id &&
+          (data.certificate.sourceSubnetId.value !== selectedSubnet?.id &&
             selectedSubnet)
         ) {
           setErrors((e) => [
