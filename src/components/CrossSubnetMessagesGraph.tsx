@@ -78,7 +78,7 @@ const CrossSubnetMessagesGraph = function () {
           links: (certificatesWithTarget || []).reduce((acc: Link[], curr) => {
             curr.targetSubnets.forEach((t) => {
               acc.push({
-                source: curr.sourceSubnetId,
+                source: curr.sourceSubnetId.value,
                 target: t.value.toString(),
                 certificateId: curr.id,
                 weight: 1,
