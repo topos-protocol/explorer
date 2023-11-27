@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         environment: [devnet-1, testnet-1]
+    environment: ${{ matrix.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
