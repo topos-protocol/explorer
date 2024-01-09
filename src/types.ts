@@ -1,13 +1,12 @@
-import { BigNumber } from 'ethers'
 import { Certificate as CertificateFromQuery } from './__generated__/graphql'
 
 export interface Subnet {
+  chainId: bigint
+  currencySymbol: string
   endpointHttp: string
   endpointWs: string
   logoURL: string
   name: string
-  currencySymbol: string
-  chainId: BigNumber
 }
 
 export interface SubnetWithId extends Subnet {
