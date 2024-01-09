@@ -9,7 +9,7 @@ import {
   Statistic,
   Tag,
 } from 'antd'
-import { utils } from 'ethers'
+import { formatUnits } from 'ethers'
 import { useContext, useEffect } from 'react'
 
 import { ErrorsContext } from '../contexts/errors'
@@ -79,7 +79,7 @@ const SubnetAccountInfo = ({ address }: Props) => {
               title="Balance"
               loading={getBalanceLoading}
               suffix={selectedSubnet?.currencySymbol}
-              value={balance !== undefined ? utils.formatUnits(balance) : ''}
+              value={balance !== undefined ? formatUnits(balance) : ''}
             />
           </Card>
         </Col>

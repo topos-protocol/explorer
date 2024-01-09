@@ -19,8 +19,8 @@ import { CertificatesContext } from '../contexts/certificates'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import { SubnetsContext } from '../contexts/subnets'
 import _Link from './Link'
-import SubnetNameAndLogo from './SubnetNameAndLogo'
 import MainQuery from './MainQuery'
+import SubnetNameAndLogo from './SubnetNameAndLogo'
 
 const Link = styled(_Link)`
   animation-duration: 0.5s;

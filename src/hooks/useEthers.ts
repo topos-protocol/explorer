@@ -1,4 +1,4 @@
-import { providers } from 'ethers'
+import { JsonRpcProvider, WebSocketProvider } from 'ethers'
 import { useContext, useMemo } from 'react'
 import SturdyWebSocket from 'sturdy-websocket'
 
@@ -19,8 +19,8 @@ export default function useEthers({ subnet }: Args = {}) {
     if (_endpoint) {
       const _url = new URL(_endpoint)
       return _url.protocol.startsWith('ws')
-        ? new providers.WebSocketProvider(new SturdyWebSocket(_endpoint))
-        : new providers.JsonRpcProvider(_endpoint)
+        ? new WebSocketProvider(new SturdyWebSocket(_endpoint))
+        : new JsonRpcProvider(_endpoint)
     }
 
     return

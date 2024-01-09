@@ -1,4 +1,4 @@
-import { providers } from 'ethers'
+import { Block } from 'ethers'
 import { createContext } from 'react'
 
-export const BlocksContext = createContext<providers.Block[]>([])
+export const BlocksContext = createContext<Block[]>([])

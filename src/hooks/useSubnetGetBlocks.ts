@@ -1,4 +1,4 @@
-import { Block } from '@ethersproject/abstract-provider'
+import { Block } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Subnet } from '../types'
@@ -31,7 +31,7 @@ export default function useSubnetGetBlocks({ limit, skip, subnet }: Options) {
   useEffect(
     function getBlocks() {
       setLoading(true)
-      const promises: Array<Promise<Block> | undefined> = []
+      const promises: Array<Promise<Block | null> | undefined> = []
 
       for (let i = definedSkip; i < definedSkip + definedLimit; i++) {
         promises.push(getBlock(i))

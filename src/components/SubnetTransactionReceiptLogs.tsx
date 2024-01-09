@@ -1,15 +1,21 @@
 import * as ERC20MessagingJSON from '@topos-protocol/topos-smart-contracts/artifacts/contracts/examples/ERC20Messaging.sol/ERC20Messaging.json'
 import * as BurnableMintableCappedERC20JSON from '@topos-protocol/topos-smart-contracts/artifacts/contracts/topos-core/BurnableMintableCappedERC20.sol/BurnableMintableCappedERC20.json'
 import * as SubnetRegistratorJSON from '@topos-protocol/topos-smart-contracts/artifacts/contracts/topos-core/SubnetRegistrator.sol/SubnetRegistrator.json'
+import * as TokenDeployerJSON from '@topos-protocol/topos-smart-contracts/artifacts/contracts/topos-core/TokenDeployer.sol/TokenDeployer.json'
 import * as ToposCoreJSON from '@topos-protocol/topos-smart-contracts/artifacts/contracts/topos-core/ToposCore.sol/ToposCore.json'
 import styled from '@emotion/styled'
 import { Descriptions, List, Space, Tag, Typography } from 'antd'
-import { BigNumber, ethers, providers } from 'ethers'
+import {
+  formatUnits,
+  Interface,
+  Log,
+  LogDescription,
+  TransactionReceipt,
+} from 'ethers'
 import { useContext, useEffect, useState } from 'react'
 
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import useEthers from '../hooks/useEthers'
-import { LogDescription } from 'ethers/lib/utils'
 import DescriptionsItem from 'antd/es/descriptions/Item'
 import AddressInfo from './AddressInfo'
 
@@ -49,13 +55,13 @@ const { Text } = Typography
 
 interface LogOrDescription {
   address: string
-  data: providers.Log | LogDescription
+  data: Log | LogDescription | null
   index: number
   type: 'log' | 'description'
 }
 
 interface Props {
-  receipt?: providers.TransactionReceipt
+  receipt?: TransactionReceipt | null
 }
 
 const SubnetTransactionReceiptLogs = ({ receipt }: Props) => {
@@ -70,30 +76,37 @@ const SubnetTransactionReceiptLogs = ({ receipt }: Props) => {
       const logOrDescriptions: LogOrDescription[] = []
 
       receipt?.logs.forEach((log) => {
-        let iface: ethers.utils.Interface | undefined
+        let iface: Interface | undefined
 
         switch (log.address) {
           case import.meta.env.VITE_ERC20_MESSAGING_CONTRACT_ADDRESS:
-            iface = new ethers.utils.Interface(ERC20MessagingJSON.abi)
+            iface = new Interface(ERC20MessagingJSON.abi)
             break
           case import.meta.env.VITE_SUBNET_REGISTRATOR_CONTRACT_ADDRESS:
-            iface = new ethers.utils.Interface(SubnetRegistratorJSON.abi)
+            iface = new Interface(SubnetRegistratorJSON.abi)
             break
           case import.meta.env.VITE_TOPOS_CORE_PROXY_CONTRACT_ADDRESS:
-            iface = new ethers.utils.Interface(ToposCoreJSON.abi)
+            iface = new Interface(ToposCoreJSON.abi)
+            break
+          case import.meta.env.VITE_TOKEN_DEPLOYER_CONTRACT_ADDRESS:
+            iface = new Interface(TokenDeployerJSON.abi)
+            break
+          case import.meta.env.VITE_TOPOS_CORE_PROXY_CONTRACT_ADDRESS:
+            iface = new Interface(ToposCoreJSON.abi)
             break
           default:
-            iface = new ethers.utils.Interface(
-              BurnableMintableCappedERC20JSON.abi
-            )
+            iface = new Interface(BurnableMintableCappedERC20JSON.abi)
         }
 
         if (iface) {
           try {
             logOrDescriptions.push({
               address: log.address,
-              data: iface.parseLog(log),
-              index: log.logIndex,
+              data: iface.parseLog({
+                topics: log.topics as string[],
+                data: log.data,
+              }),
+              index: log.index,
               type: 'description',
             })
           } catch (error) {
@@ -101,7 +114,7 @@ const SubnetTransactionReceiptLogs = ({ receipt }: Props) => {
             logOrDescriptions.push({
               address: log.address,
               data: log,
-              index: log.logIndex,
+              index: log.index,
               type: 'log',
             })
           }
@@ -109,7 +122,7 @@ const SubnetTransactionReceiptLogs = ({ receipt }: Props) => {
           logOrDescriptions.push({
             address: log.address,
             data: log,
-            index: log.logIndex,
+            index: log.index,
             type: 'log',
           })
         }
@@ -139,52 +152,49 @@ const SubnetTransactionReceiptLogs = ({ receipt }: Props) => {
             }
             description={
               <Space>
-                {logOrDescription.type === 'description' && (
-                  <Descriptions size="small">
-                    <DescriptionsItem label="Origin" span={3}>
-                      <AddressInfo address={logOrDescription.address} />
-                    </DescriptionsItem>
-                    <DescriptionsItem label="Name" span={3}>
-                      <Tag color="pink">
-                        {(logOrDescription.data as LogDescription).name}
-                      </Tag>
-                    </DescriptionsItem>
-                    <DescriptionsItem span={3}>
-                      <Text>Args</Text>
-                    </DescriptionsItem>
-                    {(
-                      logOrDescription.data as LogDescription
-                    ).eventFragment.inputs.map((input) => (
-                      <DescriptionsItem
-                        key={input.name}
-                        label={input.name}
-                        span={3}
-                      >
-                        {typeof (logOrDescription.data as LogDescription).args[
-                          input.name
-                        ] === 'object'
-                          ? BigNumber.isBigNumber(
-                              (logOrDescription.data as LogDescription).args[
-                                input.name
-                              ]
-                            )
-                            ? ethers.utils.formatUnits(
-                                (logOrDescription.data as LogDescription).args[
-                                  input.name
-                                ]
-                              )
-                            : JSON.stringify(
-                                (logOrDescription.data as LogDescription).args[
-                                  input.name
-                                ]
-                              )
-                          : (logOrDescription.data as LogDescription).args[
-                              input.name
-                            ]}
+                {logOrDescription.type === 'description' &&
+                  logOrDescription.data && (
+                    <Descriptions size="small">
+                      <DescriptionsItem label="Origin" span={3}>
+                        <AddressInfo address={logOrDescription.address} />
                       </DescriptionsItem>
-                    ))}
-                  </Descriptions>
-                )}
+                      <DescriptionsItem label="Name" span={3}>
+                        <Tag color="pink">
+                          {(logOrDescription.data as LogDescription).name}
+                        </Tag>
+                      </DescriptionsItem>
+                      <DescriptionsItem span={3}>
+                        <Text>Args</Text>
+                      </DescriptionsItem>
+                      {(
+                        logOrDescription.data as LogDescription
+                      ).fragment.inputs.map((input) => (
+                        <DescriptionsItem
+                          key={input.name}
+                          label={input.name}
+                          span={3}
+                        >
+                          {typeof (logOrDescription.data as LogDescription)
+                            .args[input.name] === 'object'
+                            ? JSON.stringify(
+                                (logOrDescription.data as LogDescription).args[
+                                  input.name
+                                ]
+                              )
+                            : typeof (logOrDescription.data as LogDescription)
+                                .args[input.name] == 'bigint'
+                            ? formatUnits(
+                                (logOrDescription.data as LogDescription).args[
+                                  input.name
+                                ]
+                              )
+                            : (logOrDescription.data as LogDescription).args[
+                                input.name
+                              ]}
+                        </DescriptionsItem>
+                      ))}
+                    </Descriptions>
+                  )}
                 {logOrDescription.type === 'log' && (
                   <Descriptions size="small">
                     <DescriptionsItem span={3}>
@@ -194,12 +204,12 @@ const SubnetTransactionReceiptLogs = ({ receipt }: Props) => {
                       <AddressInfo address={logOrDescription.address} />
                     </DescriptionsItem>
                     <DescriptionsItem label="Data" span={3}>
-                      {(logOrDescription.data as providers.Log).data}
+                      {(logOrDescription.data as Log).data}
                     </DescriptionsItem>
                     <DescriptionsItem span={3}>
                       <Text>Topics</Text>
                     </DescriptionsItem>
-                    {(logOrDescription.data as providers.Log).topics.map(
+                    {(logOrDescription.data as Log).topics.map(
                       (topic, index) => (
                         <DescriptionsItem
                           key={index}

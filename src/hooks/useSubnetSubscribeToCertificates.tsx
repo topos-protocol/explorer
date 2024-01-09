@@ -153,7 +153,6 @@ export default function useSubnetSubscribeToCertificates({
     },
     [data?.certificates]
   )
-  console.log(certificates)
 
   return { certificates, error, loading }
 }

@@ -41,6 +41,7 @@ const MainQuery = () => {
     },
   })
   const { balance } = useSubnetGetAccountBalance(selectedSubnet, sanitizedQuery)
+  console.log(balance)
 
   const options = useMemo(() => {
     const options = []
@@ -122,7 +123,7 @@ const MainQuery = () => {
       })
     }
 
-    if (balance) {
+    if (balance !== undefined) {
       options.push({
         label: <span>Accounts</span>,
         options: [

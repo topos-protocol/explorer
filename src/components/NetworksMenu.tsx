@@ -3,13 +3,13 @@ import { useTheme } from '@emotion/react'
 import { FloatButton, Modal, Space, Typography } from 'antd'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
-import logo from '../logo.svg'
-import logoWhite from '../logo_white.svg'
-import ToposSubnetSelector from './ToposSubnetSelector'
-import SubnetSelector from './SubnetSelector'
-import TCESelector from './TCESelector'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import { TourRefsContext } from '../contexts/tourRefs'
+import logo from '../logo.svg'
+import logoWhite from '../logo_white.svg'
+import SubnetSelector from './SubnetSelector'
+import TCESelector from './TCESelector'
+import ToposSubnetSelector from './ToposSubnetSelector'
 
 const { Text } = Typography
 

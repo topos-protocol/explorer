@@ -1,9 +1,8 @@
-import { SubnetRegistrator__factory } from '@topos-protocol/topos-smart-contracts/typechain-types/factories/contracts/topos-core'
-import { ethers } from 'ethers'
+import { SubnetRegistrator__factory } from '@topos-protocol/topos-smart-contracts/typechain-types'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { ErrorsContext } from '../contexts/errors'
 
-import { Subnet, SubnetWithId } from '../types'
+import { SubnetWithId } from '../types'
 import useEthers from './useEthers'
 
 export default function useRegisteredSubnets(toposSubnet?: SubnetWithId) {
@@ -31,7 +30,7 @@ export default function useRegisteredSubnets(toposSubnet?: SubnetWithId) {
 
         const registeredSubnetsCount = await contract
           ?.getSubnetCount()
-          .then((count: ethers.BigNumber) => count.toNumber())
+          .then((count) => Number(count))
           .catch((error: any) => {
             console.error(error)
             setErrors((e) => [
@@ -58,8 +57,8 @@ export default function useRegisteredSubnets(toposSubnet?: SubnetWithId) {
               promises.push(
                 contract
                   ?.subnets(subnetId)
-                  .then((subnet: Subnet) => ({
-                    ...subnet,
+                  .then((subnet) => ({
+                    ...(subnet as any).toObject(), // toObject method of ES6 Proxy
                     id: subnetId,
                   }))
                   .catch((error: Error) => {

@@ -1,4 +1,4 @@
-import { providers } from 'ethers'
+import { getDefaultProvider } from 'ethers'
 import { useCallback, useContext } from 'react'
 
 import { ErrorsContext } from '../contexts/errors'
@@ -10,11 +10,9 @@ export default function useSubnetGetLatestBlockNumber() {
   const getSubnetLatestBlockNumber = useCallback((subnet?: Subnet) => {
     if (subnet) {
       try {
-        const endpoint = subnet.endpointHttp || subnet.endpointWs
-        const url = new URL(endpoint)
-        const provider = url.protocol.startsWith('ws')
-          ? new providers.WebSocketProvider(subnet.endpointWs)
-          : new providers.JsonRpcProvider(subnet.endpointHttp)
+        const provider = getDefaultProvider(
+          subnet.endpointHttp || subnet.endpointWs
+        )
         return provider.getBlockNumber()
       } catch (error) {
         setErrors((e) => [

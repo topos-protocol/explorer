@@ -1,4 +1,4 @@
-import { BlockWithTransactions } from '@ethersproject/abstract-provider'
+import { Block } from 'ethers'
 import { useEffect, useMemo, useState } from 'react'
 
 import { Subnet } from '../types'
@@ -9,7 +9,7 @@ export default function useSubnetGetBlock(
   blockHashOrNumber?: string
 ) {
   const { provider } = useEthers({ subnet })
-  const [block, setBlock] = useState<BlockWithTransactions>()
+  const [block, setBlock] = useState<Block>()
   const [errors, setErrors] = useState<string[]>([])
 
   const isBlockHashOrNumberValidHash = useMemo(
@@ -27,11 +27,13 @@ export default function useSubnetGetBlock(
         blockHashOrNumber &&
         (isBlockHashOrNumberValidHash || isBlockHashOrNumberValidNumber)
       ) {
+        const prefetchTxs = true
         provider
-          ?.getBlockWithTransactions(
+          ?.getBlock(
             isBlockHashOrNumberValidHash
               ? blockHashOrNumber
-              : parseInt(blockHashOrNumber)
+              : parseInt(blockHashOrNumber),
+            prefetchTxs
           )
           .then((block) => {
             if (block) {
