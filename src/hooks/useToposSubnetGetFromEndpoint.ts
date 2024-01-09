@@ -1,8 +1,8 @@
-import { BigNumber, providers } from 'ethers'
+import { ToposCore__factory } from '@topos-protocol/topos-smart-contracts/typechain-types'
+import { getDefaultProvider } from 'ethers'
 import { useCallback, useContext } from 'react'
 
 import { ErrorsContext } from '../contexts/errors'
-import { toposCoreContract } from '../contracts'
 import { SubnetWithId } from '../types'
 
 export default function useToposSubnetGetFromEndpoint() {
@@ -15,18 +15,20 @@ export default function useToposSubnetGetFromEndpoint() {
           try {
             const url = new URL(endpoint)
             const isURLWs = url.protocol.startsWith('ws')
-            const provider = isURLWs
-              ? new providers.WebSocketProvider(endpoint)
-              : new providers.JsonRpcProvider(endpoint)
+
+            const provider = getDefaultProvider(endpoint)
 
             const network = await provider.getNetwork()
             const chainId = network.chainId
 
-            const contract = toposCoreContract.connect(provider)
+            const contract = ToposCore__factory.connect(
+              import.meta.env.VITE_TOPOS_CORE_PROXY_CONTRACT_ADDRESS,
+              provider
+            )
             const subnetId = await contract.networkSubnetId()
 
             resolve({
-              chainId: BigNumber.from(chainId.toString()),
+              chainId,
               currencySymbol: 'TOPOS',
               endpointHttp: isURLWs ? '' : endpoint,
               endpointWs: isURLWs ? endpoint : '',

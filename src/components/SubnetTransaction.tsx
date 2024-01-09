@@ -1,16 +1,13 @@
-import {
-  TransactionReceipt,
-  TransactionResponse,
-} from '@ethersproject/abstract-provider'
 import { Collapse, Divider, Space } from 'antd'
+import { TransactionReceipt, TransactionResponse } from 'ethers'
 
 import SubnetTransactionReceiptLogs from './SubnetTransactionReceiptLogs'
 import SubnetTransactionData from './SubnetTransactionData'
 import SubnetTransactionInfo from './SubnetTransactionInfo'
 
 interface Props {
-  receipt?: TransactionReceipt
-  transaction?: TransactionResponse
+  receipt?: TransactionReceipt | null
+  transaction?: TransactionResponse | null
 }
 
 const SubnetTransaction = ({ receipt, transaction }: Props) => (

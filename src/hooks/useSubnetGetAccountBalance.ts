@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import { useEffect, useState } from 'react'
 
 import { Subnet } from '../types'
@@ -9,7 +8,7 @@ export default function useSubnetGetAccountBalance(
   address?: string
 ) {
   const { provider } = useEthers({ subnet })
-  const [balance, setBalance] = useState<BigNumber>()
+  const [balance, setBalance] = useState<bigint>()
   const [errors, setErrors] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 

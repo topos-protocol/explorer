@@ -1,19 +1,16 @@
+import { TransactionReceipt, TransactionResponse } from 'ethers'
 import { useEffect, useState } from 'react'
 
 import { Subnet } from '../types'
 import useEthers from './useEthers'
-import {
-  TransactionReceipt,
-  TransactionResponse,
-} from '@ethersproject/abstract-provider'
 
 export default function useSubnetGetTransactionAndReceipt(
   subnet?: Subnet,
   transactionHash?: string
 ) {
   const { provider } = useEthers({ subnet })
-  const [transaction, setTransaction] = useState<TransactionResponse>()
-  const [receipt, setReceipt] = useState<TransactionReceipt>()
+  const [transaction, setTransaction] = useState<TransactionResponse | null>()
+  const [receipt, setReceipt] = useState<TransactionReceipt | null>()
   const [errors, setErrors] = useState<string[]>([])
 
   useEffect(

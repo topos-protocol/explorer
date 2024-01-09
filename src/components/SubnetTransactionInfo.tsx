@@ -1,10 +1,6 @@
-import {
-  TransactionReceipt,
-  TransactionResponse,
-} from '@ethersproject/abstract-provider'
 import { Descriptions } from 'antd'
-import { ethers } from 'ethers'
-import { useContext } from 'react'
+import { formatUnits, TransactionReceipt, TransactionResponse } from 'ethers'
+import { useContext, useEffect, useState } from 'react'
 
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import AddressInfo from './AddressInfo'
@@ -13,12 +9,26 @@ import SubnetNameAndLogo from './SubnetNameAndLogo'
 import TransactionStatus from './TransactionStatus'
 
 interface Props {
-  receipt?: TransactionReceipt
-  transaction?: TransactionResponse
+  receipt?: TransactionReceipt | null
+  transaction?: TransactionResponse | null
 }
 
 const SubnetTransactionInfo = ({ receipt, transaction }: Props) => {
   const { selectedSubnet } = useContext(SelectedNetworksContext)
+  const [confirmations, setConfirmations] = useState<number>()
+
+  useEffect(
+    function getConfirmations() {
+      async function _() {
+        transaction?.confirmations().then((confirmations) => {
+          setConfirmations(confirmations)
+        })
+      }
+
+      _()
+    },
+    [transaction]
+  )
 
   return (
     <Descriptions>
@@ -26,7 +36,7 @@ const SubnetTransactionInfo = ({ receipt, transaction }: Props) => {
         <AddressInfo address={transaction?.from} />
       </Descriptions.Item>
       <Descriptions.Item label="To" span={3}>
-        <AddressInfo address={transaction?.to} />
+        <AddressInfo address={transaction?.to || undefined} />
       </Descriptions.Item>
       <Descriptions.Item label="Subnet">
         <SubnetNameAndLogo subnet={selectedSubnet} />
@@ -35,7 +45,7 @@ const SubnetTransactionInfo = ({ receipt, transaction }: Props) => {
         {transaction?.hash}
       </Descriptions.Item>
       <Descriptions.Item label="Value">
-        {`${ethers.utils.formatUnits(transaction?.value!)} ${
+        {`${formatUnits(transaction?.value!)} ${
           selectedSubnet?.currencySymbol
         }`}
       </Descriptions.Item>
@@ -47,7 +57,7 @@ const SubnetTransactionInfo = ({ receipt, transaction }: Props) => {
         </Link>
       </Descriptions.Item>
       <Descriptions.Item label="Status">
-        <TransactionStatus status={receipt?.status} />
+        <TransactionStatus status={receipt?.status || undefined} />
       </Descriptions.Item>
       <Descriptions.Item label="Gas Limit">
         {transaction?.gasLimit.toString()}
@@ -56,7 +66,7 @@ const SubnetTransactionInfo = ({ receipt, transaction }: Props) => {
         {transaction?.gasPrice?.toString()}
       </Descriptions.Item>
       <Descriptions.Item label="Confirmations">
-        {transaction?.confirmations}
+        {confirmations}
       </Descriptions.Item>
     </Descriptions>
   )

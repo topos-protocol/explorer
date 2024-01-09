@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { isHexString } from 'ethers'
 import { useContext, useEffect, useMemo } from 'react'
 
 import RouteContainer from '../components/RouteContainer'
@@ -26,7 +26,7 @@ const SubnetCertificate = () => {
       return undefined
     }
 
-    return ethers.utils.isHexString(certificatePositionOrId) ? 'id' : 'position'
+    return isHexString(certificatePositionOrId) ? 'id' : 'position'
   }, [certificatePositionOrId])
 
   // Deactivating certificate page by position for now

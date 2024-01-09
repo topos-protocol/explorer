@@ -1,6 +1,5 @@
 import { CaretRightOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
-import { BlockWithTransactions } from '@ethersproject/abstract-provider'
 import {
   Card,
   Col,
@@ -12,7 +11,7 @@ import {
   Statistic,
   Typography,
 } from 'antd'
-import { ethers } from 'ethers'
+import { Block, formatUnits } from 'ethers'
 import { useContext } from 'react'
 
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
@@ -43,7 +42,7 @@ const Item = styled(List.Item)`
 const PAGE_SIZE = 10
 
 interface Props {
-  blockWithTransactions?: BlockWithTransactions
+  blockWithTransactions?: Block
 }
 
 const SubnetBlockInfo = ({ blockWithTransactions }: Props) => {
@@ -97,7 +96,7 @@ const SubnetBlockInfo = ({ blockWithTransactions }: Props) => {
         Transactions
       </Divider>
       <List
-        dataSource={blockWithTransactions?.transactions}
+        dataSource={blockWithTransactions?.prefetchedTransactions}
         pagination={{
           position: 'bottom',
           align: 'start',
@@ -111,7 +110,7 @@ const SubnetBlockInfo = ({ blockWithTransactions }: Props) => {
             <Item
               actions={[
                 <Space key="list-vertical-date">
-                  <Text>{`${ethers.utils.formatUnits(transaction.value)} ${
+                  <Text>{`${formatUnits(transaction.value)} ${
                     selectedSubnet?.currencySymbol
                   }`}</Text>
                 </Space>,
@@ -129,7 +128,7 @@ const SubnetBlockInfo = ({ blockWithTransactions }: Props) => {
                   <Space>
                     <AddressInfo address={transaction.from} />
                     <CaretRightOutlined />
-                    <AddressInfo address={transaction.to} />
+                    <AddressInfo address={transaction.to || undefined} />
                   </Space>
                 }
               />
