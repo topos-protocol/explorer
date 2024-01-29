@@ -40,11 +40,21 @@ export default function useSubnetSubscribeToCertificates({ filter }: Options) {
     },
   })
 
-  useEffect(() => {
-    if (data && data.watchDeliveredCertificates) {
-      setCertificates((c) => [data.watchDeliveredCertificates, ...c])
-    }
-  }, [data])
+  useEffect(
+    function onNewFilter() {
+      setCertificates([])
+    },
+    [filter?.source]
+  )
+
+  useEffect(
+    function onNewCertificates() {
+      if (data && data.watchDeliveredCertificates) {
+        setCertificates((c) => [data.watchDeliveredCertificates, ...c])
+      }
+    },
+    [data]
+  )
 
   return { certificates, error, loading }
 }
