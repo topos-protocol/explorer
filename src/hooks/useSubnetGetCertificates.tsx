@@ -8,19 +8,24 @@ const DEFAULT_LIMIT = 10
 const DEFAULT_SKIP = 0
 
 const GET_CERTIFICATES = graphql(`
-  query Certificates($fromSourceCheckpoint: SourceCheckpoint!, $limit: Int!) {
+  query Certificates(
+    $fromSourceCheckpoint: SourceCheckpointInput!
+    $limit: Int!
+  ) {
     certificates(fromSourceCheckpoint: $fromSourceCheckpoint, first: $limit) {
       prevId
       id
+      positions {
+        source {
+          position
+          sourceSubnetId
+        }
+      }
       proof
       signature
-      sourceSubnetId {
-        value
-      }
+      sourceSubnetId
       stateRoot
-      targetSubnets {
-        value
-      }
+      targetSubnets
       receiptsRootHash
       txRootHash
       verifier
@@ -66,17 +71,7 @@ export default function useSubnetGetCertificates({
       },
       limit: definedLimit,
     },
-    pollInterval: 2000,
   })
 
-  const certificates = useMemo(
-    () =>
-      data?.certificates.map((certificate, index) => ({
-        ...certificate,
-        position: sourceStreamPosition?.position || definedSkip + index,
-      })),
-    [data]
-  )
-
-  return { certificates, error, loading }
+  return { certificates: data?.certificates, error, loading }
 }

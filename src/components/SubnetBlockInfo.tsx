@@ -63,7 +63,7 @@ const SubnetBlockInfo = ({ blockWithTransactions }: Props) => {
         <Descriptions.Item label="Subnet">
           <SubnetNameAndLogo subnet={selectedSubnet} />
         </Descriptions.Item>
-        <Descriptions.Item label="Parent" span={2}>
+        <Descriptions.Item label="Parent hash" span={2}>
           <Link
             to={`/subnet/${selectedSubnet?.id}/block/${blockWithTransactions?.parentHash}`}
           >

@@ -1,5 +1,3 @@
-import { Certificate as CertificateFromQuery } from './__generated__/graphql'
-
 export interface Subnet {
   chainId: bigint
   currencySymbol: string
@@ -22,8 +20,4 @@ export interface FetchData<T> {
   data?: T
   error?: Error
   loading?: boolean
-}
-
-export interface Certificate extends CertificateFromQuery {
-  position?: number
 }

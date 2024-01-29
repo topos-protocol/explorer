@@ -121,7 +121,7 @@ const SubnetInfo = () => {
               loading={!Boolean(certificates && certificates.length)}
               value={
                 Boolean(certificates && certificates.length)
-                  ? certificates![0].position
+                  ? certificates![0].positions.source.position
                   : 0
               }
             />
@@ -206,6 +206,7 @@ const SubnetInfo = () => {
                   setCurrentPage(page)
                 },
                 pageSize: PAGE_SIZE,
+                showSizeChanger: false,
               }}
               rowKey="id"
               renderItem={(certificate, index) => (
@@ -220,10 +221,8 @@ const SubnetInfo = () => {
                           <Space>
                             {certificate.targetSubnets.map((subnetId) => (
                               <SubnetNameAndLogo
-                                key={subnetId.value}
-                                subnet={subnets?.find(
-                                  (s) => s.id === subnetId.value
-                                )}
+                                key={subnetId}
+                                subnet={subnets?.find((s) => s.id === subnetId)}
                               />
                             ))}
                           </Space>
@@ -236,7 +235,7 @@ const SubnetInfo = () => {
                     <List.Item.Meta
                       title={
                         <Space>
-                          <Text>{certificate.position}</Text>
+                          <Text>{certificate.positions.source.position}</Text>
                           {currentPage === 1 && index === 0 ? (
                             <Tag color="gold">Latest</Tag>
                           ) : null}

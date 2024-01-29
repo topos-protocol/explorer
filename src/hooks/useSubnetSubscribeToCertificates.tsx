@@ -2,23 +2,24 @@ import { useSubscription } from '@apollo/client'
 import { useEffect, useState } from 'react'
 
 import { graphql } from '../__generated__/gql'
-import { Certificate } from '../types'
-import { SubnetFilter } from '../__generated__/graphql'
+import { Certificate, SubnetFilter } from '../__generated__/graphql'
 
 const WATCH_CERTIFICATES = graphql(`
   subscription OnCertificates($filter: SubnetFilter) {
     watchDeliveredCertificates(filter: $filter) {
       prevId
       id
+      positions {
+        source {
+          sourceSubnetId
+          position
+        }
+      }
       proof
       signature
-      sourceSubnetId {
-        value
-      }
+      sourceSubnetId
       stateRoot
-      targetSubnets {
-        value
-      }
+      targetSubnets
       receiptsRootHash
       txRootHash
       verifier
