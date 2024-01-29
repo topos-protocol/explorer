@@ -1,5 +1,5 @@
 import { createContext } from 'react'
 
-import { Certificate } from '../types'
+import { Certificate } from '../__generated__/graphql'
 
 export const CertificatesContext = createContext<Certificate[]>([])

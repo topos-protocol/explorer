@@ -1,6 +1,6 @@
 import { CaretRightOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 
 import {
   Descriptions,
@@ -13,7 +13,7 @@ import {
 } from 'antd'
 import { Link as _Link, useNavigate } from 'react-router-dom'
 
-import { BlocksContext } from '../contexts/blocks'
+import { CertificatesContext } from '../contexts/certificates'
 import { SubnetsContext } from '../contexts/subnets'
 import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 import useSubnetGetCertificates from '../hooks/useSubnetGetCertificates'
@@ -70,17 +70,34 @@ const { Text } = Typography
 const PAGE_SIZE = 8
 
 const CertificatesList = () => {
-  const { data: subnets } = useContext(SubnetsContext)
-  const blocks = useContext(BlocksContext)
-  const { selectedSubnet } = useContext(SelectedNetworksContext)
   const [currentPage, setCurrentPage] = useState(1)
+  const [firstSubscribedCertPosition, setFirstSubscribedCertPosition] =
+    useState<number>()
+  const { data: subnets } = useContext(SubnetsContext)
+  const certificatesFromSubscription = useContext(CertificatesContext)
+  const { selectedSubnet } = useContext(SelectedNetworksContext)
   const { certificates, loading } = useSubnetGetCertificates({
     limit: PAGE_SIZE,
     skip: PAGE_SIZE * (currentPage - 1),
     sourceStreamPosition: {
-      sourceSubnetId: { value: selectedSubnet?.id || '' },
+      sourceSubnetId: selectedSubnet?.id || '',
     },
   })
+
+  useEffect(
+    function getFirstSubscribedCertPosition() {
+      if (
+        certificatesFromSubscription &&
+        certificatesFromSubscription.length &&
+        firstSubscribedCertPosition == undefined
+      ) {
+        setFirstSubscribedCertPosition(
+          certificatesFromSubscription[0].positions.source.position
+        )
+      }
+    },
+    [certificatesFromSubscription]
+  )
 
   const navigate = useNavigate()
 
@@ -109,7 +126,7 @@ const CertificatesList = () => {
       />
       <List
         dataSource={certificates}
-        loading={loading}
+        loading={loading || firstSubscribedCertPosition == undefined}
         pagination={{
           position: 'bottom',
           align: 'start',
@@ -118,7 +135,7 @@ const CertificatesList = () => {
           },
           pageSize: PAGE_SIZE,
           showSizeChanger: false,
-          total: blocks[0]?.number,
+          total: firstSubscribedCertPosition,
         }}
         rowKey="id"
         renderItem={(certificate) => (
@@ -134,8 +151,8 @@ const CertificatesList = () => {
                       <CaretRightOutlined />
                       {certificate.targetSubnets.map((subnetId) => (
                         <SubnetNameAndLogo
-                          key={subnetId.value}
-                          subnet={subnets?.find((s) => s.id === subnetId.value)}
+                          key={subnetId}
+                          subnet={subnets?.find((s) => s.id === subnetId)}
                         />
                       ))}
                     </Space>
@@ -148,7 +165,7 @@ const CertificatesList = () => {
               <List.Item.Meta
                 title={
                   <Space>
-                    <Text>{certificate.position}</Text>
+                    <Text>{certificate.positions.source.position}</Text>
                   </Space>
                 }
                 description={certificate.id}

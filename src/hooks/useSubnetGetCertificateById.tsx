@@ -8,19 +8,21 @@ import { SelectedNetworksContext } from '../contexts/selectedNetworks'
 // import { ErrorsContext } from '../contexts/errors'
 
 const GET_CERTIFICATE = graphql(`
-  query Certificate($certificateId: CertificateId!) {
+  query Certificate($certificateId: String!) {
     certificate(certificateId: $certificateId) {
       prevId
       id
+      positions {
+        source {
+          sourceSubnetId
+          position
+        }
+      }
       proof
       signature
-      sourceSubnetId {
-        value
-      }
+      sourceSubnetId
       stateRoot
-      targetSubnets {
-        value
-      }
+      targetSubnets
       receiptsRootHash
       txRootHash
       verifier
@@ -42,9 +44,7 @@ export default function useSubnetGetCertificateById({
 
   const { data, error, loading } = useQuery(GET_CERTIFICATE, {
     variables: {
-      certificateId: {
-        value: certificateId || '',
-      },
+      certificateId: certificateId || '',
     },
   })
 
@@ -53,7 +53,7 @@ export default function useSubnetGetCertificateById({
       if (data) {
         if (
           !data?.certificate ||
-          (data.certificate.sourceSubnetId.value !== selectedSubnet?.id &&
+          (data.certificate.sourceSubnetId !== selectedSubnet?.id &&
             selectedSubnet)
         ) {
           setErrors((e) => [

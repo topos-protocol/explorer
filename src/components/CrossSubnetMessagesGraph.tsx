@@ -3,12 +3,11 @@ import styled from '@emotion/styled'
 import { Alert as AntdAlert, Space, Typography } from 'antd'
 import ForceGraph from 'force-graph'
 import { useContext, useEffect, useMemo, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { SubnetWithId } from '../types'
 import { SubnetsContext } from '../contexts/subnets'
 import useSubnetSubscribeToCertificates from '../hooks/useSubnetSubscribeToCertificates'
-import { SourceStreamPosition } from '../__generated__/graphql'
-import { CrossSubnetMessagesGraphContext } from '../contexts/crossSubnetMessagesGraph'
 
 const { Text } = Typography
 
@@ -27,35 +26,9 @@ type Link = {
 
 const CrossSubnetMessagesGraph = function () {
   const { data: subnets } = useContext(SubnetsContext)
-  const { subnetsLatestBlockNumbers } = useContext(
-    CrossSubnetMessagesGraphContext
-  )
-  const { certificates } = useSubnetSubscribeToCertificates(
-    subnets && subnetsLatestBlockNumbers
-      ? {
-          limit: 2,
-          sourceSubnetIds: subnets?.reduce(
-            (acc: Array<SourceStreamPosition> | undefined, subnet) => {
-              const latestBlockNumber = subnetsLatestBlockNumbers.get(subnet.id)
+  const { certificates } = useSubnetSubscribeToCertificates({})
+  const navigate = useNavigate()
 
-              if (latestBlockNumber !== undefined && acc === undefined) {
-                acc = []
-              }
-
-              if (latestBlockNumber !== undefined) {
-                acc!.push({
-                  position: latestBlockNumber,
-                  sourceSubnetId: { value: subnet.id },
-                })
-              }
-
-              return acc
-            },
-            undefined
-          ),
-        }
-      : {}
-  )
   const graphElement = useRef<HTMLDivElement>(null)
 
   const certificatesWithTarget = useMemo(
@@ -76,10 +49,10 @@ const CrossSubnetMessagesGraph = function () {
             return { ...subnet, img }
           }),
           links: (certificatesWithTarget || []).reduce((acc: Link[], curr) => {
-            curr.targetSubnets.forEach((t) => {
+            curr.targetSubnets.forEach((targetSubnet) => {
               acc.push({
-                source: curr.sourceSubnetId.value,
-                target: t.value.toString(),
+                source: curr.sourceSubnetId,
+                target: targetSubnet,
                 certificateId: curr.id,
                 weight: 1,
               })
@@ -152,6 +125,9 @@ const CrossSubnetMessagesGraph = function () {
             (link) => data.nodes.find((n) => n.id === link.source)?.id || null
           )
           .linkLabel('certificateId')
+          .onLinkClick(({ certificateId, source }: any) => {
+            navigate(`/subnet/${source?.id}/certificate/${certificateId}`)
+          })
           .nodeLabel('name')
           .cooldownTicks(100)
           .height(600)
@@ -169,17 +145,8 @@ const CrossSubnetMessagesGraph = function () {
           <Space>
             <InfoCircleOutlined style={{ color: 'white' }} />
             <Text>
-              Listening for certificates with cross-subnet messages from these
-              positions: (
-              {subnets?.map((subnet, index, array) => {
-                const position = subnetsLatestBlockNumbers?.get(subnet.id)
-                return (
-                  <span key={subnet.id}>
-                    {subnet.name}: {position}
-                    {index !== array.length - 1 ? ', ' : ')'}
-                  </span>
-                )
-              })}
+              This view displays live cross-subnet messages exchanged between
+              subnets
             </Text>
           </Space>
         }

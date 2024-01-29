@@ -37,11 +37,10 @@ const MainQuery = () => {
     limit: 1,
     sourceStreamPosition: {
       position: isNaN(+sanitizedQuery) ? Infinity : parseInt(sanitizedQuery),
-      sourceSubnetId: { value: selectedSubnet?.id || '' },
+      sourceSubnetId: selectedSubnet?.id || '',
     },
   })
   const { balance } = useSubnetGetAccountBalance(selectedSubnet, sanitizedQuery)
-  console.log(balance)
 
   const options = useMemo(() => {
     const options = []

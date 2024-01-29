@@ -8,14 +8,13 @@ import { Space } from 'antd'
 import { useParams } from 'react-router-dom'
 import SubnetNameAndLogo from '../components/SubnetNameAndLogo'
 import { RouteParamsFirstContext } from '../contexts/routeParamsFirst'
-// Deactivating certificate page by position for now
-// import useSubnetGetCertificates from '../hooks/useSubnetGetCertificates'
+import useSubnetGetCertificates from '../hooks/useSubnetGetCertificates'
 import useSubnetGetCertificateById from '../hooks/useSubnetGetCertificateById'
 
 type CertificatePositionOrId = 'position' | 'id'
 
 const SubnetCertificate = () => {
-  const { certificatePositionOrId, subnetId } = useParams() // For now certificatePositionOrId is position only
+  const { certificatePositionOrId, subnetId } = useParams()
   const { setRouteParamsProcessing } = useContext(RouteParamsFirstContext)
   const { selectedSubnet } = useContext(SelectedNetworksContext)
 
@@ -29,22 +28,20 @@ const SubnetCertificate = () => {
     return isHexString(certificatePositionOrId) ? 'id' : 'position'
   }, [certificatePositionOrId])
 
-  // Deactivating certificate page by position for now
-  //
-  // const { certificates } = useSubnetGetCertificates({
-  //   sourceStreamPosition: {
-  //     position:
-  //       certificatePositionOrId &&
-  //       typeOfCertificatePositionOrId &&
-  //       typeOfCertificatePositionOrId === 'position'
-  //         ? parseInt(certificatePositionOrId)
-  //         : undefined,
-  //     sourceSubnetId: { value: selectedSubnet?.id || '' },
-  //   },
-  //   limit: 1,
-  // })
+  const { certificates: certificatesByPosition } = useSubnetGetCertificates({
+    sourceStreamPosition: {
+      position:
+        certificatePositionOrId &&
+        typeOfCertificatePositionOrId &&
+        typeOfCertificatePositionOrId === 'position'
+          ? parseInt(certificatePositionOrId)
+          : Infinity,
+      sourceSubnetId: selectedSubnet?.id || '',
+    },
+    limit: 1,
+  })
 
-  const { certificate } = useSubnetGetCertificateById({
+  const { certificate: certificateById } = useSubnetGetCertificateById({
     certificateId:
       certificatePositionOrId &&
       typeOfCertificatePositionOrId &&
@@ -73,8 +70,11 @@ const SubnetCertificate = () => {
       ]}
     >
       <Space direction="vertical">
-        {Boolean(certificate) && (
-          <SubnetCertificateInfo certificate={certificate} />
+        {certificatesByPosition !== undefined && (
+          <SubnetCertificateInfo certificate={certificatesByPosition[0]} />
+        )}
+        {certificateById !== undefined && (
+          <SubnetCertificateInfo certificate={certificateById} />
         )}
       </Space>
     </RouteContainer>
